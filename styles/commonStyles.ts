@@ -1,26 +1,54 @@
-import { StyleSheet, ViewStyle, TextStyle } from 'react-native';
+
+import { StyleSheet } from 'react-native';
+import { orlgoColors } from '@/constants/Colors';
 
 export const colors = {
-  primary: '#162456',    // Material Blue
-  secondary: '#193cb8',  // Darker Blue
-  accent: '#64B5F6',     // Light Blue
-  background: '#101824',  // Keeping dark background
-  backgroundAlt: '#162133',  // Keeping dark background
-  text: '#e3e3e3',       // Keeping light text
-  grey: '#90CAF9',       // Light Blue Grey
-  card: '#193cb8',       // Keeping dark card background
+  primary: orlgoColors.primary,
+  secondary: orlgoColors.primaryDark,
+  accent: orlgoColors.neonGreen,
+  background: orlgoColors.background,
+  backgroundAlt: orlgoColors.backgroundAlt,
+  text: orlgoColors.textLight,
+  textDark: orlgoColors.textDark,
+  card: orlgoColors.cardBg,
+  queueGreen: orlgoColors.queueGreen,
+  queueYellow: orlgoColors.queueYellow,
+  queueRed: orlgoColors.queueRed,
 };
 
 export const buttonStyles = StyleSheet.create({
-  instructionsButton: {
-    backgroundColor: colors.primary,
-    alignSelf: 'center',
-    width: '100%',
+  primaryButton: {
+    backgroundColor: colors.accent,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: colors.accent,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 12,
+    elevation: 8,
   },
-  backButton: {
-    backgroundColor: colors.backgroundAlt,
-    alignSelf: 'center',
-    width: '100%',
+  primaryButtonText: {
+    color: colors.textDark,
+    fontSize: 18,
+    fontWeight: '600',
+    fontFamily: 'Poppins_600SemiBold',
+  },
+  secondaryButton: {
+    backgroundColor: colors.primary,
+    paddingVertical: 14,
+    paddingHorizontal: 28,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  secondaryButtonText: {
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: '600',
+    fontFamily: 'Poppins_600SemiBold',
   },
 });
 
@@ -35,8 +63,6 @@ export const commonStyles = StyleSheet.create({
     backgroundColor: colors.background,
     width: '100%',
     height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   content: {
     flex: 1,
@@ -46,44 +72,57 @@ export const commonStyles = StyleSheet.create({
     width: '100%',
   },
   title: {
-    fontSize: 24,
-    fontWeight: '800',
+    fontSize: 32,
+    fontWeight: '700',
     textAlign: 'center',
     color: colors.text,
-    marginBottom: 10
+    marginBottom: 10,
+    fontFamily: 'Poppins_700Bold',
+  },
+  subtitle: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 8,
+    fontFamily: 'Poppins_600SemiBold',
   },
   text: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '400',
     color: colors.text,
     marginBottom: 8,
     lineHeight: 24,
-    textAlign: 'center',
+    fontFamily: 'Poppins_400Regular',
   },
   section: {
     width: '100%',
     alignItems: 'center',
     paddingHorizontal: 20,
   },
-  buttonContainer: {
-    width: '100%',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-  },
   card: {
-    backgroundColor: colors.backgroundAlt,
-    borderColor: colors.grey,
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
+    backgroundColor: colors.card,
+    borderRadius: 18,
+    padding: 16,
     marginVertical: 8,
     width: '100%',
-    boxShadow: '0px 2px 3px rgba(0, 0, 0, 0.1)',
-    elevation: 2,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  icon: {
-    width: 60,
-    height: 60,
-    tintColor: "white",
+  neonGlow: {
+    shadowColor: colors.accent,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 16,
+    elevation: 10,
+  },
+  purpleGlow: {
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 12,
+    elevation: 8,
   },
 });

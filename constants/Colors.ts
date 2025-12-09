@@ -1,5 +1,6 @@
-const tintColorLight = "#0a7ea4";
-const tintColorDark = "#fff";
+
+const tintColorLight = "#6A00F5";
+const tintColorDark = "#9A00FF";
 
 export const zincColors = {
   50: "#fafafa",
@@ -15,27 +16,49 @@ export const zincColors = {
   950: "#09090b",
 };
 
+// ORLGO Brand Colors
+export const orlgoColors = {
+  primary: "#6A00F5",        // Primary Purple
+  primaryDark: "#5500C7",    // Darker Purple for pressed states
+  neonGreen: "#C6FF00",      // Neon Green accent
+  gradientStart: "#6A00F5",  // Gradient start
+  gradientEnd: "#9A00FF",    // Gradient end
+  gradientGreen: "#C6FF00",  // Green gradient variant
+  textLight: "#FFFFFF",      // Light text
+  textDark: "#1A1A1A",       // Dark text
+  queueGreen: "#C6FF00",     // Queue status - short wait
+  queueYellow: "#FFC300",    // Queue status - medium wait
+  queueRed: "#FF3C38",       // Queue status - long wait
+  background: "#0A0014",     // Deep purple-black background
+  backgroundAlt: "#1A0033",  // Alternative background
+  cardBg: "#2A0055",         // Card background
+};
+
 export const appleBlue = "#007AFF";
 export const appleRed = "#FF3B30";
-
 export const borderColor = "#A1A1AA80";
 export const appleGreen = "#34C759";
+
 export const Colors = {
   light: {
-    text: "#11181C",
-    background: "#fff",
+    text: "#1A1A1A",
+    background: "#FFFFFF",
     tint: tintColorLight,
-    icon: "#687076",
+    icon: "#6A00F5",
     tabIconDefault: "#687076",
     tabIconSelected: tintColorLight,
+    card: "#F5F5F5",
+    border: "#E0E0E0",
   },
   dark: {
-    text: "#ECEDEE",
-    background: "#151718",
+    text: "#FFFFFF",
+    background: "#0A0014",
     tint: tintColorDark,
-    icon: "#9BA1A6",
+    icon: "#C6FF00",
     tabIconDefault: "#9BA1A6",
     tabIconSelected: tintColorDark,
+    card: "#2A0055",
+    border: "#6A00F5",
   },
 };
 
@@ -218,244 +241,61 @@ export const backgroundColors = [
 ];
 
 export const emojies = [
-  // Fruits
-  "🍏",
-  "🍎",
-  "🍐",
-  "🍊",
-  "🍋",
-  "🍌",
-  "🍉",
-  "🍇",
-  "🍓",
-  "🫐",
-  "🍈",
-  "🍒",
-  "🍑",
-  "🥭",
-  "🍍",
-  "🥥",
-  "🥝",
-
-  // Vegetables
-  "🍅",
-  "🍆",
-  "🥑",
-  "🥦",
-  "🥬",
-  "🥒",
-  "🌶",
-  "🫑",
-  "🌽",
-  "🥕",
-  "🥔",
-  "🧄",
-  "🧅",
-  "🍄",
-
-  // Breads & Bakery
-  "🍞",
-  "🥖",
-  "🥨",
-  "🥐",
-  "🥯",
-
-  // Dairy & Eggs
-  "🧀",
-  "🥚",
-  "🍳",
-  "🥞",
-  "🧇",
-
-  // Meats
-  "🥓",
-  "🥩",
-  "🍗",
-  "🍖",
-
-  // Fast Foods
-  "🌭",
-  "🍔",
-  "🍟",
-  "🍕",
-
-  // Wraps, Sandwiches & Ethnic Foods
-  "🥪",
-  "🌮",
-  "🌯",
-  "🫔",
-  "🥙",
-  "🧆",
-
-  // Pasta, Rice & Asian Foods
-  "🍜",
-  "🍝",
-  "🍣",
-  "🍤",
-  "🍙",
-  "🍚",
-  "🍛",
-  "🍲",
-  "🥘",
-  "🥗",
-
-  // Snacks & Misc
-  "🍿",
-  "🧈",
-  "🥫",
-  "🍱",
-  "🥮",
-  "🍠",
-  "🍥",
-  "🥟",
-  "🥠",
-  "🥡",
-
-  // Desserts & Sweets
-  "🍦",
-  "🍧",
-  "🍨",
-  "🍩",
-  "🍪",
-  "🧁",
-  "🍰",
-  "🎂",
-  "🍮",
-  "🍭",
-  "🍬",
-  "🍫",
-  "🍯",
-
-  // Nuts
-  "🥜",
-  "🌰",
-
-  // Drinks
-  "🥛",
-  "🧃",
-  "🧉",
-  "🥤",
-  "🍶",
-  "🍵",
-  "🍺",
-  "🍻",
-  "🥂",
-  "🍷",
-  "🍸",
-  "🍹",
-  "🥃",
-  "🍾",
-  "☕️",
-  "🫖",
-
-  // Utensils & Condiments
-  "🥄",
-  "🍴",
-  "🍽",
-  "🥢",
-  "🧂",
-
-  // Shopping & Payment
-  "🛒",
-  "🛍️",
-  "🧺",
-  "💳",
-  "💸",
-  "💵",
-  "💰",
-  "💲",
-  "🧾",
-  "🔖",
-  "🏪",
-  "🏬",
-  "🏦",
-  "🏧",
-  "📦",
-  "📮",
-  "🏷️",
-
-  // Organizational / Utility
-  "✅",
-  "📋",
-  "📜",
-  "✏️",
-  "📝",
-  "🔍",
-  "📆",
-  "⏰",
-  "📱",
-  "💻",
-  "🌐",
-  "🔗",
-  "🔒",
-  "🔑",
-  "🗃️",
-  "🗂️",
-  "🔄",
-  "💡",
-  "⭐️",
-  "📌",
-  "📍",
-  "📊",
-  "💯",
-  "🎉",
-  "🎊",
-  "🎁",
-  "🏆",
-  "⚖️",
-  "🏠",
-
-  // Transportation & Movement (for shopping trips)
-  "🚗",
-  "🏃‍♂️",
-  "🏃‍♀️",
-  "🚶‍♂️",
-  "🚶‍♀️",
-
-  // Clothing (Items to buy)
-  "👕",
-  "👖",
-  "👗",
-  "👔",
-  "🩳",
-  "👠",
-  "👟",
-  "🧥",
-  "🧤",
-  "🧣",
-  "🧦",
-  "🎒",
-  "👜",
-  "👛",
-  "👓",
-  "🕶️",
-  "👒",
-
-  // Household Items (Things you might add to a shopping list)
-  "🪣",
-  "🪑",
-  "🛋️",
-  "🚪",
-  "🪟",
-  "🏺",
-  "🖼️",
-  "📺",
+  // Theme Park Emojis
+  "🎢",
+  "🎡",
+  "🎠",
+  "🎪",
+  "🎭",
+  "🎬",
+  "🎨",
+  "🎯",
+  "🎮",
+  "🎰",
+  "🎲",
+  "🎳",
+  "🎸",
+  "🎺",
+  "🎻",
+  "🎹",
+  "🥁",
+  "🎤",
+  "🎧",
+  "🎼",
+  "🎵",
+  "🎶",
+  "🎙",
   "📻",
-  "🔌",
-  "🧴",
-  "🪥",
-  "🧹",
-  "🧽",
-  "🗑️",
-  "🪒",
-  "💊",
-  "💉",
-  "🩹",
-  "❤️",
-  "💔",
-  "💘",
-  "💙",
-  "💚",
-  "💛",
-  "💜",
+  "📺",
+  "📷",
+  "📸",
+  "📹",
+  "🎥",
+  "📽",
+  "🎞",
+  "📞",
+  "☎️",
+  "📱",
+  "📲",
+  "💻",
+  "⌨️",
+  "🖥",
+  "🖨",
+  "🖱",
+  "🖲",
+  "🕹",
+  "🗜",
+  "💾",
+  "💿",
+  "📀",
+  "📼",
+  "📷",
+  "📸",
+  "📹",
+  "🎥",
+  "📽",
+  "🎞",
+  "📞",
+  "☎️",
+  "📱",
 ];
