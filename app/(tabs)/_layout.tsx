@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Stack } from 'expo-router';
 import FloatingTabBar, { TabBarItem } from '@/components/FloatingTabBar';
@@ -12,10 +13,34 @@ export default function TabLayout() {
       label: 'Home',
     },
     {
+      name: 'location',
+      route: '/(tabs)/parks',
+      icon: 'place',
+      label: 'Parques',
+    },
+    {
+      name: 'map',
+      route: '/(tabs)/map',
+      icon: 'map',
+      label: 'Mapa',
+    },
+    {
+      name: 'calendar',
+      route: '/(tabs)/itinerary',
+      icon: 'event',
+      label: 'Roteiros',
+    },
+    {
+      name: 'community',
+      route: '/(tabs)/community',
+      icon: 'chat-bubble-outline',
+      label: 'Comunidade',
+    },
+    {
       name: 'profile',
       route: '/(tabs)/profile',
       icon: 'person',
-      label: 'Profile',
+      label: 'Perfil',
     },
   ];
 
@@ -29,9 +54,14 @@ export default function TabLayout() {
         }}
       >
         <Stack.Screen key="home" name="(home)" />
+        <Stack.Screen key="parks" name="parks" />
+        <Stack.Screen key="map" name="map" />
+        <Stack.Screen key="itinerary" name="itinerary" />
+        <Stack.Screen key="community" name="community" />
         <Stack.Screen key="profile" name="profile" />
+        <Stack.Screen key="brand-parks" name="brand-parks" />
       </Stack>
-      <FloatingTabBar tabs={tabs} />
+      <FloatingTabBar tabs={tabs} containerWidth={380} />
     </>
   );
 }

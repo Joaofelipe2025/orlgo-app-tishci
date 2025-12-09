@@ -1,15 +1,23 @@
 
 import React from "react";
-import { ScrollView, StyleSheet, View, Text, TouchableOpacity, Image, Dimensions } from "react-native";
+import { ScrollView, StyleSheet, View, Text, TouchableOpacity, Image, Dimensions, Platform } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { brandsData } from "@/data/parksData";
 import { colors, commonStyles } from "@/styles/commonStyles";
+import { IconSymbol } from "@/components/IconSymbol";
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
 
 const { width } = Dimensions.get('window');
-const cardWidth = (width - 48) / 2;
+const cardWidth = (width - 48) / 3;
+
+interface CategoryItem {
+  id: string;
+  name: string;
+  icon: string;
+  route: string;
+}
 
 export default function HomeScreen() {
   const theme = useTheme();
@@ -21,6 +29,45 @@ export default function HomeScreen() {
     Poppins_700Bold,
   });
 
+  const categories: CategoryItem[] = [
+    {
+      id: 'parks',
+      name: 'Parques',
+      icon: 'attractions',
+      route: '/(tabs)/parks',
+    },
+    {
+      id: 'attractions',
+      name: 'Atrações',
+      icon: 'local-activity',
+      route: '/(tabs)/parks',
+    },
+    {
+      id: 'itineraries',
+      name: 'Itinerários',
+      icon: 'map',
+      route: '/(tabs)/itinerary',
+    },
+    {
+      id: 'map',
+      name: 'Mapa',
+      icon: 'public',
+      route: '/(tabs)/map',
+    },
+    {
+      id: 'diary',
+      name: 'Diário',
+      icon: 'menu-book',
+      route: '/(tabs)/profile',
+    },
+    {
+      id: 'marketplace',
+      name: 'Marketplace',
+      icon: 'card-giftcard',
+      route: '/(tabs)/profile',
+    },
+  ];
+
   if (!fontsLoaded) {
     return null;
   }
@@ -28,6 +75,21 @@ export default function HomeScreen() {
   const handleBrandPress = (brandId: string) => {
     console.log('Brand pressed:', brandId);
     router.push(`/(tabs)/brand-parks?brandId=${brandId}`);
+  };
+
+  const handleCategoryPress = (route: string) => {
+    console.log('Category pressed:', route);
+    router.push(route as any);
+  };
+
+  const handleCreateItinerary = () => {
+    console.log('Create itinerary');
+    router.push('/(tabs)/itinerary');
+  };
+
+  const handleAccessCommunity = () => {
+    console.log('Access community');
+    router.push('/(tabs)/community');
   };
 
   return (
@@ -46,48 +108,115 @@ export default function HomeScreen() {
           >
             <Text style={styles.logoText}>OrlGo</Text>
           </LinearGradient>
-          <Text style={[styles.headerTitle, { fontFamily: 'Poppins_700Bold' }]}>
+          <Text style={[styles.headerTitle, { fontFamily: 'Poppins_700Bold', color: theme.dark ? colors.text : colors.textDark }]}>
             Orlando Guide
           </Text>
-          <Text style={[styles.headerSubtitle, { fontFamily: 'Poppins_400Regular' }]}>
+          <Text style={[styles.headerSubtitle, { fontFamily: 'Poppins_400Regular', color: theme.dark ? '#999' : '#666' }]}>
             Escolha sua marca favorita
           </Text>
         </View>
 
-        {/* Brands Grid */}
-        <View style={styles.brandsGrid}>
-          {brandsData.map((brand, index) => (
-            <React.Fragment key={index}>
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => handleBrandPress(brand.id)}
-              >
-                <LinearGradient
-                  colors={['#6A00F5', '#9A00FF']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={[styles.brandCard, { width: cardWidth }]}
+        {/* Empty State Card */}
+        <View style={[styles.emptyStateCard, { backgroundColor: theme.dark ? colors.card : '#F5F5F5' }]}>
+          <Text style={[styles.emptyStateTitle, { fontFamily: 'Poppins_700Bold', color: theme.dark ? colors.text : colors.textDark }]}>
+            Hoje você não tem nenhum agendamento
+          </Text>
+          <Text style={[styles.emptyStateSubtitle, { fontFamily: 'Poppins_400Regular', color: theme.dark ? '#999' : '#666' }]}>
+            Crie um roteiro personalizado ou explore os parques disponíveis
+          </Text>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={handleCreateItinerary}
+          >
+            <LinearGradient
+              colors={['#6A00F5', '#9A00FF']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.createButton}
+            >
+              <Text style={[styles.createButtonText, { fontFamily: 'Poppins_600SemiBold' }]}>
+                Criar Roteiro
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+
+        {/* Community Section */}
+        <View style={[styles.communitySection, { backgroundColor: theme.dark ? colors.card : '#F5F5F5' }]}>
+          <View style={styles.communitySectionHeader}>
+            <IconSymbol
+              ios_icon_name="chat"
+              android_material_icon_name="chat-bubble-outline"
+              size={48}
+              color={colors.primary}
+            />
+            <Text style={[styles.communitySectionTitle, { fontFamily: 'Poppins_700Bold', color: theme.dark ? colors.text : colors.textDark }]}>
+              Comunidade Orlando Guide
+            </Text>
+            <Text style={[styles.communitySectionSubtitle, { fontFamily: 'Poppins_400Regular', color: theme.dark ? '#999' : '#666' }]}>
+              Veja dicas em tempo real, filas, promoções e achados dos parques e outlets
+            </Text>
+          </View>
+
+          <View style={styles.communityTags}>
+            {['#Fila', '#Chuva', '#Desconto', '#MagicKingdom'].map((tag, index) => (
+              <React.Fragment key={index}>
+                <View style={styles.communityTag}>
+                  <Text style={[styles.communityTagText, { fontFamily: 'Poppins_400Regular' }]}>
+                    {tag}
+                  </Text>
+                </View>
+              </React.Fragment>
+            ))}
+          </View>
+
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={handleAccessCommunity}
+          >
+            <LinearGradient
+              colors={['#6A00F5', '#9A00FF']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.communityButton}
+            >
+              <Text style={[styles.communityButtonText, { fontFamily: 'Poppins_600SemiBold' }]}>
+                Acessar Comunidade
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+
+        {/* Categories Section */}
+        <View style={styles.categoriesSection}>
+          <Text style={[styles.categoriesTitle, { fontFamily: 'Poppins_700Bold', color: theme.dark ? colors.text : colors.textDark }]}>
+            Explore as Categorias
+          </Text>
+
+          <View style={styles.categoriesGrid}>
+            {categories.map((category, index) => (
+              <React.Fragment key={index}>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => handleCategoryPress(category.route)}
                 >
-                  <View style={styles.brandImageContainer}>
-                    <Image
-                      source={{ uri: brand.logo }}
-                      style={styles.brandImage}
-                      resizeMode="cover"
-                    />
-                    <View style={styles.brandOverlay} />
-                  </View>
-                  <View style={styles.brandNameContainer}>
-                    <Text style={[styles.brandName, { fontFamily: 'Poppins_700Bold' }]}>
-                      {brand.name}
-                    </Text>
-                    <Text style={[styles.parkCount, { fontFamily: 'Poppins_400Regular' }]}>
-                      {brand.parks.length} {brand.parks.length === 1 ? 'parque' : 'parques'}
+                  <View style={[styles.categoryCard, { backgroundColor: theme.dark ? colors.card : '#F5F5F5' }]}>
+                    <View style={styles.categoryIconContainer}>
+                      <IconSymbol
+                        ios_icon_name={category.icon}
+                        android_material_icon_name={category.icon}
+                        size={40}
+                        color={colors.primary}
+                      />
+                    </View>
+                    <Text style={[styles.categoryName, { fontFamily: 'Poppins_600SemiBold', color: theme.dark ? colors.text : colors.textDark }]}>
+                      {category.name}
                     </Text>
                   </View>
-                </LinearGradient>
-              </TouchableOpacity>
-            </React.Fragment>
-          ))}
+                </TouchableOpacity>
+              </React.Fragment>
+            ))}
+          </View>
         </View>
 
         {/* Bottom spacing for tab bar */}
@@ -102,12 +231,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingTop: 60,
+    paddingTop: Platform.OS === 'android' ? 60 : 60,
     paddingHorizontal: 16,
   },
   header: {
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 24,
   },
   logoContainer: {
     width: 80,
@@ -131,54 +260,141 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 32,
     fontWeight: '700',
-    color: colors.text,
     marginBottom: 8,
   },
   headerSubtitle: {
     fontSize: 16,
-    color: '#999',
   },
-  brandsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  brandCard: {
+  emptyStateCard: {
     borderRadius: 18,
-    marginBottom: 16,
-    overflow: 'hidden',
+    padding: 24,
+    marginBottom: 24,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  emptyStateTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  emptyStateSubtitle: {
+    fontSize: 14,
+    textAlign: 'center',
+    marginBottom: 20,
+    lineHeight: 20,
+  },
+  createButton: {
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderRadius: 12,
     shadowColor: '#6A00F5',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 12,
     elevation: 6,
   },
-  brandImageContainer: {
-    width: '100%',
-    height: 140,
-    position: 'relative',
+  createButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
-  brandImage: {
-    width: '100%',
-    height: '100%',
+  communitySection: {
+    borderRadius: 18,
+    padding: 24,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
   },
-  brandOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(106, 0, 245, 0.3)',
+  communitySectionHeader: {
+    alignItems: 'center',
+    marginBottom: 16,
   },
-  brandNameContainer: {
-    padding: 16,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-  },
-  brandName: {
+  communitySectionTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#C6FF00',
-    marginBottom: 4,
+    textAlign: 'center',
+    marginTop: 12,
+    marginBottom: 8,
   },
-  parkCount: {
-    fontSize: 12,
+  communitySectionSubtitle: {
+    fontSize: 13,
+    textAlign: 'center',
+    lineHeight: 18,
+  },
+  communityTags: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 8,
+    marginBottom: 20,
+  },
+  communityTag: {
+    backgroundColor: 'rgba(106, 0, 245, 0.1)',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+  },
+  communityTagText: {
+    fontSize: 13,
+    color: colors.primary,
+  },
+  communityButton: {
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderRadius: 12,
+    alignItems: 'center',
+    shadowColor: '#6A00F5',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  communityButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
     color: '#FFFFFF',
-    opacity: 0.8,
+  },
+  categoriesSection: {
+    marginBottom: 24,
+  },
+  categoriesTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    marginBottom: 16,
+  },
+  categoriesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  categoryCard: {
+    width: cardWidth,
+    aspectRatio: 1,
+    borderRadius: 16,
+    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  categoryIconContainer: {
+    marginBottom: 8,
+  },
+  categoryName: {
+    fontSize: 12,
+    fontWeight: '600',
+    textAlign: 'center',
   },
 });
