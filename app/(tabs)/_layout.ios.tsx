@@ -40,13 +40,13 @@ export default function TabLayout() {
         }}
       />
       <NativeTabs.Screen
-        name="map"
+        name="marketplace"
         options={{
-          title: 'Mapa',
+          title: 'Ofertas',
           tabBarIcon: ({ color }) => (
             <IconSymbol
-              ios_icon_name="map.fill"
-              android_material_icon_name="map"
+              ios_icon_name="tag.fill"
+              android_material_icon_name="local-offer"
               color={color}
               size={24}
             />
@@ -61,20 +61,6 @@ export default function TabLayout() {
             <IconSymbol
               ios_icon_name="calendar"
               android_material_icon_name="event"
-              color={color}
-              size={24}
-            />
-          ),
-        }}
-      />
-      <NativeTabs.Screen
-        name="community"
-        options={{
-          title: 'Comunidade',
-          tabBarIcon: ({ color }) => (
-            <IconSymbol
-              ios_icon_name="bubble.left.and.bubble.right.fill"
-              android_material_icon_name="chat-bubble-outline"
               color={color}
               size={24}
             />
@@ -97,6 +83,12 @@ export default function TabLayout() {
       />
       <NativeTabs.Screen
         name="brand-parks"
+        options={{
+          href: null,
+        }}
+      />
+      <NativeTabs.Screen
+        name="store-details"
         options={{
           href: null,
         }}

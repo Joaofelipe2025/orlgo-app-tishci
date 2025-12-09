@@ -19,22 +19,16 @@ export default function TabLayout() {
       label: 'Parques',
     },
     {
-      name: 'map',
-      route: '/(tabs)/map',
-      icon: 'map',
-      label: 'Mapa',
+      name: 'marketplace',
+      route: '/(tabs)/marketplace',
+      icon: 'local-offer',
+      label: 'Ofertas',
     },
     {
       name: 'calendar',
       route: '/(tabs)/itinerary',
       icon: 'event',
       label: 'Roteiros',
-    },
-    {
-      name: 'community',
-      route: '/(tabs)/community',
-      icon: 'chat-bubble-outline',
-      label: 'Comunidade',
     },
     {
       name: 'profile',
@@ -55,9 +49,9 @@ export default function TabLayout() {
       >
         <Stack.Screen key="home" name="(home)" />
         <Stack.Screen key="parks" name="parks" />
-        <Stack.Screen key="map" name="map" />
+        <Stack.Screen key="marketplace" name="marketplace" />
+        <Stack.Screen key="store-details" name="store-details" />
         <Stack.Screen key="itinerary" name="itinerary" />
-        <Stack.Screen key="community" name="community" />
         <Stack.Screen key="profile" name="profile" />
         <Stack.Screen key="brand-parks" name="brand-parks" />
       </Stack>
