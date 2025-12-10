@@ -84,7 +84,10 @@ export default function ParksScreen() {
 
   const handleParkPress = (parkId: string) => {
     console.log('Park pressed:', parkId);
-    router.push(`/(tabs)/park-detail?parkId=${parkId}`);
+    router.push({
+      pathname: '/(tabs)/park-content',
+      params: { parkId },
+    });
   };
 
   const getWaitTimeColor = (status: ShortWaitAttraction['status']) => {
@@ -100,7 +103,7 @@ export default function ParksScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.dark ? colors.background : '#FFFFFF' }]}>
-      {/* Header */}
+      {/* Compact Header */}
       <LinearGradient
         colors={['#6A00F5', '#9A00FF']}
         start={{ x: 0, y: 0 }}
@@ -109,9 +112,6 @@ export default function ParksScreen() {
       >
         <Text style={[styles.headerTitle, { fontFamily: 'Poppins_700Bold' }]}>
           Parques
-        </Text>
-        <Text style={[styles.headerSubtitle, { fontFamily: 'Poppins_400Regular' }]}>
-          Explore os melhores parques temáticos de Orlando
         </Text>
       </LinearGradient>
 
@@ -194,7 +194,7 @@ export default function ParksScreen() {
                     style={styles.parkGradient}
                   >
                     <View style={styles.parkInfo}>
-                      <Text style={[styles.parkName, { fontFamily: 'Poppins_700Bold' }]}>
+                      <Text style={[styles.parkNameText, { fontFamily: 'Poppins_700Bold' }]}>
                         {park.name}
                       </Text>
                       <Text style={[styles.parkBrand, { fontFamily: 'Poppins_400Regular' }]}>
@@ -230,26 +230,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingTop: Platform.OS === 'android' ? 60 : 60,
-    paddingBottom: 24,
-    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'android' ? 48 : 60,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
     alignItems: 'center',
-    shadowColor: '#6A00F5',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
   },
   headerTitle: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: '700',
     color: '#FFFFFF',
-    marginBottom: 4,
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    color: '#FFFFFF',
-    opacity: 0.9,
   },
   scrollContent: {
     padding: 16,
@@ -335,6 +324,12 @@ const styles = StyleSheet.create({
   },
   parkInfo: {
     padding: 20,
+  },
+  parkNameText: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: 4,
   },
   parkBrand: {
     fontSize: 14,

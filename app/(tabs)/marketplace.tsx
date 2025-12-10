@@ -168,10 +168,9 @@ export default function MarketplaceHome() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
+      {/* Compact Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Marketplace</Text>
-        <Text style={styles.headerSubtitle}>Ofertas exclusivas para sua viagem</Text>
       </View>
 
       <ScrollView
@@ -262,17 +261,12 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'android' ? 48 : 60,
     paddingBottom: 20,
     paddingHorizontal: 20,
+    alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: '700',
     color: '#FFFFFF',
-    marginBottom: 4,
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    color: '#FFFFFF',
-    opacity: 0.9,
   },
   scrollView: {
     flex: 1,

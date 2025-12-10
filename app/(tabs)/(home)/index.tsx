@@ -8,9 +8,11 @@ import { WeatherWidget } from "@/components/WeatherWidget";
 import { DailyAgenda } from "@/components/DailyAgenda";
 import { NavigationMenu } from "@/components/NavigationMenu";
 import { CommunitySection } from "@/components/CommunitySection";
+import { useItinerary } from "@/contexts/ItineraryContext";
 
 export default function HomeScreen() {
   const theme = useTheme();
+  const { getUpcomingItems } = useItinerary();
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -22,15 +24,14 @@ export default function HomeScreen() {
     return null;
   }
 
-  // Mock data for next attraction - in production, this would come from user's itinerary
-  const nextAttraction = undefined; // Set to undefined to show empty state
-  // Uncomment below to show with data:
-  // const nextAttraction = {
-  //   name: 'Space Mountain',
-  //   parkName: 'Magic Kingdom',
-  //   estimatedTime: '14:30',
-  //   waitTime: 35,
-  // };
+  // Get the next attraction from itinerary
+  const upcomingItems = getUpcomingItems(1);
+  const nextAttraction = upcomingItems.length > 0 ? {
+    name: upcomingItems[0].attractionName,
+    parkName: upcomingItems[0].parkName,
+    estimatedTime: upcomingItems[0].estimatedTime || '14:30',
+    waitTime: upcomingItems[0].waitTime || 30,
+  } : undefined;
 
   return (
     <View style={[styles.container, { backgroundColor: theme.dark ? colors.background : '#FFFFFF' }]}>

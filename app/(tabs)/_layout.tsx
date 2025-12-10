@@ -14,7 +14,7 @@ export default function TabLayout() {
     },
     {
       name: 'location',
-      route: '/(tabs)/parks',
+      route: '/(tabs)/brands',
       icon: 'place',
       label: 'Parques',
     },
@@ -48,12 +48,18 @@ export default function TabLayout() {
         }}
       >
         <Stack.Screen key="home" name="(home)" />
+        <Stack.Screen key="brands" name="brands" />
         <Stack.Screen key="parks" name="parks" />
+        <Stack.Screen key="brand-parks" name="brand-parks" />
+        <Stack.Screen key="park-content" name="park-content" />
+        <Stack.Screen key="attraction-detail" name="attraction-detail" />
         <Stack.Screen key="marketplace" name="marketplace" />
         <Stack.Screen key="store-details" name="store-details" />
         <Stack.Screen key="itinerary" name="itinerary" />
         <Stack.Screen key="profile" name="profile" />
-        <Stack.Screen key="brand-parks" name="brand-parks" />
+        <Stack.Screen key="login" name="login" />
+        <Stack.Screen key="map" name="map" />
+        <Stack.Screen key="community" name="community" />
       </Stack>
       <FloatingTabBar tabs={tabs} containerWidth={380} />
     </>
