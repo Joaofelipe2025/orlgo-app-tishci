@@ -13,7 +13,7 @@ import {
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { getParkById } from '@/data/parksData';
-import { loadParkLiveData, EnrichedEntity } from '@/services/themeParksApi';
+import { loadParkLiveData, loadBuschGardensContent, EnrichedEntity, BUSCH_GARDENS } from '@/services/themeParksApi';
 import { colors } from '@/styles/commonStyles';
 import { IconSymbol } from '@/components/IconSymbol';
 import { useItinerary } from '@/contexts/ItineraryContext';
@@ -36,14 +36,41 @@ export default function ParkContentScreen() {
 
   const park = parkId ? getParkById(parkId) : null;
 
+  // Check if this is Busch Gardens
+  const isBuschGardens = park?.id === 'busch-gardens' || park?.apiEntityId === BUSCH_GARDENS.id;
+
   useEffect(() => {
-    if (park?.apiEntityId) {
+    if (isBuschGardens) {
+      // Use /children endpoint for Busch Gardens
+      loadBuschGardensData();
+    } else if (park?.apiEntityId) {
+      // Use /live endpoint for other parks
       loadLiveData();
     } else {
       // Use mock data if no API entity ID
       loadMockData();
     }
-  }, [park]);
+  }, [park, isBuschGardens]);
+
+  const loadBuschGardensData = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      console.log('Loading Busch Gardens data from /children endpoint...');
+      const data = await loadBuschGardensContent();
+      setAttractions(data.attractions);
+      setRestaurants(data.restaurants);
+      setShows(data.shows);
+      console.log(`Loaded ${data.attractions.length} attractions, ${data.restaurants.length} restaurants, ${data.shows.length} shows`);
+    } catch (err) {
+      console.error('Error loading Busch Gardens data:', err);
+      setError('Erro ao carregar dados. Usando dados offline.');
+      loadMockData();
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadLiveData = async () => {
     if (!park?.apiEntityId) return;
@@ -178,12 +205,23 @@ export default function ParkContentScreen() {
   const handleAddToItinerary = (item: EnrichedEntity) => {
     if (!park) return;
 
+    const category = item.entityType === 'ATTRACTION' ? 'ATTRACTION' : 
+                     item.entityType === 'RESTAURANT' ? 'RESTAURANT' : 'SHOW';
+
     addToItinerary({
       attractionId: item.id,
       attractionName: item.name,
       parkId: park.id,
       parkName: park.name,
       waitTime: item.queue?.STANDBY?.waitTime,
+    });
+
+    console.log('Added to itinerary:', {
+      parkId: park.id,
+      parkName: park.name,
+      itemId: item.id,
+      itemName: item.name,
+      category: category,
     });
   };
 
@@ -201,9 +239,35 @@ export default function ParkContentScreen() {
       return data;
     }
 
-    return data.filter(item => 
-      item.attractionStyle?.includes(activeFilter)
-    );
+    // Filter by keywords for non-"all" filters
+    return data.filter(item => {
+      const name = item.name.toLowerCase();
+      
+      switch (activeFilter) {
+        case 'radical':
+          return name.includes('coaster') || 
+                 name.includes('express') || 
+                 name.includes('cheetah') ||
+                 name.includes('tigris') ||
+                 name.includes('cobra') ||
+                 name.includes('montu') ||
+                 name.includes('kumba') ||
+                 name.includes('sheikra') ||
+                 item.attractionStyle?.includes('radical');
+        case 'family':
+          return name.includes('safari') || 
+                 name.includes('train') ||
+                 name.includes('skyride') ||
+                 name.includes('serengeti') ||
+                 item.attractionStyle?.includes('family');
+        case 'kids':
+          return name.includes('kiddie') || 
+                 name.includes('junior') ||
+                 item.attractionStyle?.includes('kids');
+        default:
+          return item.attractionStyle?.includes(activeFilter);
+      }
+    });
   };
 
   const getCurrentTabData = () => {
@@ -251,15 +315,15 @@ export default function ParkContentScreen() {
             <View style={styles.itemInfo}>
               <Text style={styles.itemName}>{item.name}</Text>
               
-              {/* Summary */}
+              {/* Summary - only show for Busch Gardens or if available */}
               {item.summary && (
                 <Text style={styles.itemSummary} numberOfLines={2}>
                   {item.summary}
                 </Text>
               )}
 
-              {/* Attraction Styles */}
-              {item.attractionStyle && item.attractionStyle.length > 0 && (
+              {/* Attraction Styles - only for attractions tab */}
+              {activeTab === 'attractions' && item.attractionStyle && item.attractionStyle.length > 0 && (
                 <View style={styles.stylesContainer}>
                   {item.attractionStyle.map((style, index) => (
                     <View key={index} style={styles.styleBadge}>
@@ -344,6 +408,9 @@ export default function ParkContentScreen() {
         </TouchableOpacity>
         <View style={styles.headerContent}>
           <Text style={styles.headerTitle}>{park.shortName}</Text>
+          {isBuschGardens && (
+            <Text style={styles.headerSubtitle}>Dados via /children</Text>
+          )}
         </View>
         <View style={styles.headerPlaceholder} />
       </LinearGradient>
@@ -385,7 +452,7 @@ export default function ParkContentScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.filtersContainer}
         >
-          {(['all', 'radical', 'family', 'kids', 'show', 'simulator', 'water'] as FilterType[]).map((filter, index) => {
+          {(['all', 'radical', 'family', 'kids'] as FilterType[]).map((filter, index) => {
             const icon = getFilterIcon(filter);
             return (
               <React.Fragment key={index}>
@@ -429,7 +496,9 @@ export default function ParkContentScreen() {
         {loading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={colors.primary} />
-            <Text style={styles.loadingText}>Carregando dados ao vivo...</Text>
+            <Text style={styles.loadingText}>
+              {isBuschGardens ? 'Carregando dados do Busch Gardens...' : 'Carregando dados ao vivo...'}
+            </Text>
           </View>
         ) : (
           <>
@@ -485,6 +554,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#FFFFFF',
     fontFamily: 'Poppins_700Bold',
+  },
+  headerSubtitle: {
+    fontSize: 11,
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontFamily: 'Poppins_400Regular',
+    marginTop: 2,
   },
   headerPlaceholder: {
     width: 40,

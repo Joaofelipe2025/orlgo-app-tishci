@@ -17,6 +17,12 @@ export interface LiveEntity {
   };
 }
 
+export interface ChildEntity {
+  id: string;
+  name: string;
+  entityType: 'ATTRACTION' | 'RESTAURANT' | 'SHOW' | 'ENTERTAINMENT' | 'PARADE' | 'FIREWORKS';
+}
+
 export interface EnrichedEntity extends LiveEntity {
   attractionStyle?: string[];
   intensity?: 'low' | 'medium' | 'high';
@@ -30,14 +36,28 @@ export interface LiveDataResponse {
   };
 }
 
+export interface ChildrenResponse {
+  children: ChildEntity[];
+}
+
 export interface FilteredLiveData {
   attractions: EnrichedEntity[];
   restaurants: EnrichedEntity[];
   shows: EnrichedEntity[];
 }
 
+// Busch Gardens Configuration
+export const BUSCH_GARDENS = {
+  id: "fc40c99a-be0a-42f4-a483-1e939db275c2",
+  name: "Busch Gardens Tampa",
+  brand: "SeaWorld Parks",
+  timezone: "America/New_York"
+};
+
+export const THEMEPARKS_API = "https://api.themeparks.wiki/v1/entity";
+
 // Function to determine attraction style based on name and type
-function determineAttractionStyle(entity: LiveEntity): string[] {
+function determineAttractionStyle(entity: LiveEntity | ChildEntity): string[] {
   const name = entity.name.toLowerCase();
   const styles: string[] = [];
 
@@ -51,7 +71,15 @@ function determineAttractionStyle(entity: LiveEntity): string[] {
     name.includes('everest') ||
     name.includes('space') ||
     name.includes('thunder') ||
-    name.includes('splash')
+    name.includes('splash') ||
+    name.includes('cheetah') ||
+    name.includes('tigris') ||
+    name.includes('cobra') ||
+    name.includes('montu') ||
+    name.includes('kumba') ||
+    name.includes('sheikra') ||
+    name.includes('falcon') ||
+    name.includes('phoenix')
   ) {
     styles.push('radical');
   }
@@ -66,7 +94,10 @@ function determineAttractionStyle(entity: LiveEntity): string[] {
     name.includes('dumbo') ||
     name.includes('tea') ||
     name.includes('small world') ||
-    name.includes('buzz')
+    name.includes('buzz') ||
+    name.includes('train') ||
+    name.includes('skyride') ||
+    name.includes('serengeti')
   ) {
     styles.push('family');
   }
@@ -77,7 +108,9 @@ function determineAttractionStyle(entity: LiveEntity): string[] {
     name.includes('carousel') ||
     name.includes('barnstormer') ||
     name.includes('carpet') ||
-    name.includes('tea')
+    name.includes('tea') ||
+    name.includes('kiddie') ||
+    name.includes('junior')
   ) {
     styles.push('kids');
   }
@@ -107,7 +140,9 @@ function determineAttractionStyle(entity: LiveEntity): string[] {
     name.includes('splash') ||
     name.includes('rapids') ||
     name.includes('kali') ||
-    name.includes('water')
+    name.includes('water') ||
+    name.includes('flume') ||
+    name.includes('river')
   ) {
     styles.push('water');
   }
@@ -128,7 +163,7 @@ function determineIntensity(styles: string[]): 'low' | 'medium' | 'high' {
 }
 
 // Function to generate a brief summary
-function generateSummary(entity: LiveEntity, styles: string[]): string {
+function generateSummary(entity: LiveEntity | ChildEntity, styles: string[]): string {
   const name = entity.name;
 
   if (entity.entityType === 'RESTAURANT') {
@@ -190,6 +225,58 @@ function enrichEntity(entity: LiveEntity): EnrichedEntity {
     summary,
     queueStatus,
   };
+}
+
+// Enrich child entity (from /children endpoint)
+function enrichChildEntity(entity: ChildEntity): EnrichedEntity {
+  const styles = determineAttractionStyle(entity);
+  const intensity = determineIntensity(styles);
+  const summary = generateSummary(entity, styles);
+
+  return {
+    ...entity,
+    status: 'OPERATING',
+    attractionStyle: styles,
+    intensity,
+    summary,
+    queueStatus: 'short',
+  };
+}
+
+// Function to load Busch Gardens content using /children endpoint
+export async function loadBuschGardensContent(): Promise<FilteredLiveData> {
+  try {
+    const res = await fetch(
+      `${THEMEPARKS_API}/${BUSCH_GARDENS.id}/children`
+    );
+
+    if (!res.ok) {
+      throw new Error("Erro HTTP: " + res.status);
+    }
+
+    const json: ChildrenResponse = await res.json();
+    const children = json.children || [];
+
+    console.log(`Loaded ${children.length} children for Busch Gardens`);
+
+    // Separate by type
+    const attractions = children
+      .filter((c) => c.entityType === "ATTRACTION")
+      .map(enrichChildEntity);
+
+    const restaurants = children
+      .filter((c) => c.entityType === "RESTAURANT")
+      .map(enrichChildEntity);
+
+    const shows = children
+      .filter((c) => c.entityType === "SHOW")
+      .map(enrichChildEntity);
+
+    return { attractions, restaurants, shows };
+  } catch (error) {
+    console.log("Erro ao carregar dados do Busch Gardens:", error);
+    return { attractions: [], restaurants: [], shows: [] };
+  }
 }
 
 export async function loadParkLiveData(parkId: string): Promise<FilteredLiveData> {
