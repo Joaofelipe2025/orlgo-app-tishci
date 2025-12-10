@@ -12,7 +12,7 @@ import {
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { getParkById } from '@/data/parksData';
-import { loadParkLiveData, loadBuschGardensContent, EnrichedEntity, BUSCH_GARDENS } from '@/services/themeParksApi';
+import { loadParkLiveData, loadBuschGardensWithQueue, EnrichedEntity, BUSCH_GARDENS } from '@/services/themeParksApi';
 import { IconSymbol } from '@/components/IconSymbol';
 import { useItinerary } from '@/contexts/ItineraryContext';
 
@@ -39,7 +39,7 @@ export default function ParkContentScreen() {
 
   useEffect(() => {
     if (isBuschGardens) {
-      // Use /children endpoint for Busch Gardens
+      // Use new function with wait times for Busch Gardens
       loadBuschGardensData();
     } else if (park?.apiEntityId) {
       // Use /live endpoint for other parks
@@ -55,8 +55,8 @@ export default function ParkContentScreen() {
     setError(null);
 
     try {
-      console.log('Loading Busch Gardens data from /children endpoint...');
-      const data = await loadBuschGardensContent();
+      console.log('Loading Busch Gardens data with wait times...');
+      const data = await loadBuschGardensWithQueue();
       setAttractions(data.attractions);
       setRestaurants(data.restaurants);
       setShows(data.shows);
@@ -104,6 +104,7 @@ export default function ParkContentScreen() {
         intensity: 'high',
         summary: 'Montanha-russa no escuro com efeitos espaciais e muita emoção!',
         queueStatus: 'long',
+        waitTime: 45,
       },
       {
         id: 'mock-2',
@@ -115,6 +116,7 @@ export default function ParkContentScreen() {
         intensity: 'low',
         summary: 'Aventura aquática clássica com piratas, tesouros e canhões.',
         queueStatus: 'medium',
+        waitTime: 25,
       },
       {
         id: 'mock-3',
@@ -126,6 +128,7 @@ export default function ParkContentScreen() {
         intensity: 'low',
         summary: 'Mansão assombrada com fantasmas divertidos e efeitos especiais.',
         queueStatus: 'short',
+        waitTime: 8,
       },
       {
         id: 'mock-4',
@@ -137,6 +140,7 @@ export default function ParkContentScreen() {
         intensity: 'low',
         summary: 'Voe com o Dumbo em círculos mágicos, perfeito para os pequenos.',
         queueStatus: 'medium',
+        waitTime: 15,
       },
     ];
 
@@ -147,6 +151,7 @@ export default function ParkContentScreen() {
         entityType: 'RESTAURANT',
         status: 'OPERATING',
         summary: 'Jantar no castelo da Fera com pratos franceses requintados.',
+        waitTime: null,
       },
       {
         id: 'mock-r2',
@@ -154,6 +159,7 @@ export default function ParkContentScreen() {
         entityType: 'RESTAURANT',
         status: 'OPERATING',
         summary: 'Refeição real no castelo da Cinderela com princesas Disney.',
+        waitTime: null,
       },
     ];
 
@@ -165,6 +171,7 @@ export default function ParkContentScreen() {
         status: 'OPERATING',
         attractionStyle: ['show'],
         summary: 'Desfile colorido com personagens Disney e carros alegóricos gigantes.',
+        waitTime: null,
       },
       {
         id: 'mock-s2',
@@ -173,6 +180,7 @@ export default function ParkContentScreen() {
         status: 'OPERATING',
         attractionStyle: ['show'],
         summary: 'Espetáculo de fogos com projeções no castelo e trilha emocionante.',
+        waitTime: null,
       },
     ];
 
@@ -211,7 +219,7 @@ export default function ParkContentScreen() {
       attractionName: item.name,
       parkId: park.id,
       parkName: park.name,
-      waitTime: item.queue?.STANDBY?.waitTime,
+      waitTime: item.waitTime ?? undefined,
     });
 
     console.log('Added to itinerary:', {
@@ -220,10 +228,11 @@ export default function ParkContentScreen() {
       itemId: item.id,
       itemName: item.name,
       category: category,
+      waitTime: item.waitTime,
     });
   };
 
-  const getWaitTimeColor = (waitTime?: number) => {
+  const getWaitTimeColor = (waitTime?: number | null) => {
     if (!waitTime) return '#10B981'; // Green for no wait
     if (waitTime <= 10) return '#10B981'; // Green
     if (waitTime <= 30) return '#F59E0B'; // Yellow/Amber
@@ -304,7 +313,7 @@ export default function ParkContentScreen() {
 
   const renderItem = (item: EnrichedEntity, index: number) => {
     const inItinerary = isInItinerary(item.id);
-    const waitTime = item.queue?.STANDBY?.waitTime;
+    const waitTime = item.waitTime;
 
     return (
       <TouchableOpacity
@@ -327,6 +336,13 @@ export default function ParkContentScreen() {
                     color="#FFFFFF"
                   />
                   <Text style={styles.waitTimeText}>{waitTime} min</Text>
+                </View>
+              )}
+
+              {/* No wait time info */}
+              {activeTab === 'attractions' && (waitTime === undefined || waitTime === null) && (
+                <View style={styles.waitTimeBadgeMuted}>
+                  <Text style={styles.waitTimeTextMuted}>sem informação</Text>
                 </View>
               )}
             </View>
@@ -703,6 +719,18 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#FFFFFF',
     fontFamily: 'Poppins_700Bold',
+  },
+  waitTimeBadgeMuted: {
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 12,
+    backgroundColor: '#E5E7EB',
+  },
+  waitTimeTextMuted: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6B7280',
+    fontFamily: 'Poppins_600SemiBold',
   },
   itemSummary: {
     fontSize: 14,

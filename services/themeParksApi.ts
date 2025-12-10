@@ -28,6 +28,7 @@ export interface EnrichedEntity extends LiveEntity {
   intensity?: 'low' | 'medium' | 'high';
   summary?: string;
   queueStatus?: 'short' | 'medium' | 'long';
+  waitTime?: number | null;
 }
 
 export interface LiveDataResponse {
@@ -54,6 +55,7 @@ export const BUSCH_GARDENS = {
   timezone: "America/New_York"
 };
 
+export const BUSCH_GARDENS_ID = "fc40c99a-be0a-42f4-a483-1e939db275c2";
 export const THEMEPARKS_API = "https://api.themeparks.wiki/v1/entity";
 
 // Function to determine attraction style based on name and type
@@ -315,7 +317,7 @@ function generateSummary(entity: LiveEntity | ChildEntity, styles: string[]): st
 }
 
 // Function to determine queue status based on wait time
-function getQueueStatus(waitTime?: number): 'short' | 'medium' | 'long' {
+function getQueueStatus(waitTime?: number | null): 'short' | 'medium' | 'long' {
   if (!waitTime) return 'short';
   if (waitTime <= 10) return 'short';
   if (waitTime <= 30) return 'medium';
@@ -336,11 +338,12 @@ function enrichEntity(entity: LiveEntity): EnrichedEntity {
     intensity,
     summary,
     queueStatus,
+    waitTime: waitTime ?? null,
   };
 }
 
 // Enrich child entity (from /children endpoint)
-function enrichChildEntity(entity: ChildEntity): EnrichedEntity {
+function enrichChildEntity(entity: ChildEntity, waitTime?: number | null): EnrichedEntity {
   const styles = determineAttractionStyle(entity);
   const intensity = determineIntensity(styles);
   const summary = generateSummary(entity, styles);
@@ -351,73 +354,75 @@ function enrichChildEntity(entity: ChildEntity): EnrichedEntity {
     attractionStyle: styles,
     intensity,
     summary,
-    queueStatus: 'short',
+    queueStatus: getQueueStatus(waitTime),
+    waitTime: waitTime ?? null,
   };
 }
 
-// Function to load Busch Gardens content using /children endpoint
-export async function loadBuschGardensContent(): Promise<FilteredLiveData> {
+// NEW FUNCTION: Load Busch Gardens with Queue Times
+export async function loadBuschGardensWithQueue(): Promise<FilteredLiveData> {
   try {
-    const res = await fetch(
-      `${THEMEPARKS_API}/${BUSCH_GARDENS.id}/children`
+    // 1. CHILDREN: lista base de itens do parque
+    const childrenRes = await fetch(
+      `${THEMEPARKS_API}/${BUSCH_GARDENS_ID}/children`
     );
-
-    if (!res.ok) {
-      throw new Error("Erro HTTP: " + res.status);
-    }
-
-    const json: ChildrenResponse = await res.json();
-    const children = json.children || [];
+    if (!childrenRes.ok) throw new Error("Erro CHILDREN: " + childrenRes.status);
+    const childrenJson: ChildrenResponse = await childrenRes.json();
+    const children = childrenJson.children || [];
 
     console.log(`Loaded ${children.length} children for Busch Gardens`);
 
-    // Separate by type
+    // 2. LIVE: status + tempo de fila das atrações
+    const liveRes = await fetch(
+      `${THEMEPARKS_API}/${BUSCH_GARDENS_ID}/live`
+    );
+    if (!liveRes.ok) throw new Error("Erro LIVE: " + liveRes.status);
+    const liveJson: LiveDataResponse = await liveRes.json();
+    const liveEntities = liveJson.liveData?.entities || [];
+
+    console.log(`Loaded ${liveEntities.length} live entities for Busch Gardens`);
+
+    // 3. Mapa: id -> waitTime (fila STANDBY em minutos)
+    const waitTimeById: Record<string, number> = {};
+    liveEntities.forEach((e) => {
+      const standby = e.queue?.STANDBY;
+      if (standby && typeof standby.waitTime === "number") {
+        waitTimeById[e.id] = standby.waitTime;
+      }
+    });
+
+    console.log(`Found wait times for ${Object.keys(waitTimeById).length} attractions`);
+
+    // 4. Anexar waitTime aos children
+    const attachWaitTime = (item: ChildEntity): EnrichedEntity => {
+      const waitTime = waitTimeById[item.id] ?? null;
+      return enrichChildEntity(item, waitTime);
+    };
+
     const attractions = children
       .filter((c) => c.entityType === "ATTRACTION")
-      .map(enrichChildEntity);
+      .map(attachWaitTime);
 
     const restaurants = children
       .filter((c) => c.entityType === "RESTAURANT")
-      .map(enrichChildEntity);
+      .map(attachWaitTime);
 
     const shows = children
       .filter((c) => c.entityType === "SHOW")
-      .map(enrichChildEntity);
+      .map(attachWaitTime);
 
-    // Now fetch live data to get wait times
-    try {
-      const liveRes = await fetch(`${THEMEPARKS_API}/${BUSCH_GARDENS.id}/live`);
-      if (liveRes.ok) {
-        const liveJson: LiveDataResponse = await liveRes.json();
-        const liveEntities = liveJson.liveData?.entities || [];
-
-        // Create a map of live data by ID
-        const liveDataMap = new Map<string, LiveEntity>();
-        liveEntities.forEach(entity => {
-          liveDataMap.set(entity.id, entity);
-        });
-
-        // Merge wait times into attractions
-        attractions.forEach(attraction => {
-          const liveData = liveDataMap.get(attraction.id);
-          if (liveData) {
-            attraction.queue = liveData.queue;
-            attraction.status = liveData.status;
-            attraction.queueStatus = getQueueStatus(liveData.queue?.STANDBY?.waitTime);
-          }
-        });
-
-        console.log('Merged live wait times with attractions');
-      }
-    } catch (liveError) {
-      console.log('Could not fetch live data, using children data only:', liveError);
-    }
+    console.log(`Processed: ${attractions.length} attractions, ${restaurants.length} restaurants, ${shows.length} shows`);
 
     return { attractions, restaurants, shows };
   } catch (error) {
-    console.log("Erro ao carregar dados do Busch Gardens:", error);
+    console.log("Erro Busch Gardens:", error);
     return { attractions: [], restaurants: [], shows: [] };
   }
+}
+
+// Legacy function - kept for backwards compatibility
+export async function loadBuschGardensContent(): Promise<FilteredLiveData> {
+  return loadBuschGardensWithQueue();
 }
 
 export async function loadParkLiveData(parkId: string): Promise<FilteredLiveData> {
