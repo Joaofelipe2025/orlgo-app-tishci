@@ -21,6 +21,7 @@ export interface ChildEntity {
   id: string;
   name: string;
   entityType: 'ATTRACTION' | 'RESTAURANT' | 'SHOW' | 'ENTERTAINMENT' | 'PARADE' | 'FIREWORKS';
+  externalId?: string;
 }
 
 export interface EnrichedEntity extends LiveEntity {
@@ -29,6 +30,8 @@ export interface EnrichedEntity extends LiveEntity {
   summary?: string;
   queueStatus?: 'short' | 'medium' | 'long';
   waitTime?: number | null;
+  queueTime?: number | null;
+  externalId?: string;
 }
 
 export interface LiveDataResponse {
@@ -339,6 +342,7 @@ function enrichEntity(entity: LiveEntity): EnrichedEntity {
     summary,
     queueStatus,
     waitTime: waitTime ?? null,
+    queueTime: waitTime ?? null,
   };
 }
 
@@ -356,34 +360,30 @@ function enrichChildEntity(entity: ChildEntity, waitTime?: number | null): Enric
     summary,
     queueStatus: getQueueStatus(waitTime),
     waitTime: waitTime ?? null,
+    queueTime: waitTime ?? null,
   };
 }
 
-// NEW FUNCTION: Load Busch Gardens with Queue Times (ROBUST VERSION)
+// NEW IMPROVED FUNCTION: Load Busch Gardens with Queue Times (ROBUST VERSION WITH EXTERNAL ID SUPPORT)
 export async function loadBuschGardensWithQueue(): Promise<FilteredLiveData> {
   try {
-    // 1. Buscar CHILDREN (lista base de atrações / restaurantes / shows)
+    // 1) CHILDREN: base de atrações / restaurantes / shows
     const childrenRes = await fetch(
       `${THEMEPARKS_API}/${BUSCH_GARDENS_ID}/children`
     );
-    if (!childrenRes.ok) {
-      throw new Error("Erro CHILDREN: " + childrenRes.status);
-    }
+    if (!childrenRes.ok) throw new Error("Erro CHILDREN: " + childrenRes.status);
     const childrenJson: ChildrenResponse = await childrenRes.json();
     const children = childrenJson.children || [];
 
     console.log(`Loaded ${children.length} children for Busch Gardens`);
 
-    // 2. Buscar LIVE (fila e status em tempo real)
+    // 2) LIVE: tempos de fila
     const liveRes = await fetch(
       `${THEMEPARKS_API}/${BUSCH_GARDENS_ID}/live`
     );
-    if (!liveRes.ok) {
-      throw new Error("Erro LIVE: " + liveRes.status);
-    }
+    if (!liveRes.ok) throw new Error("Erro LIVE: " + liveRes.status);
     const liveJson: any = await liveRes.json();
 
-    // liveData pode ser array ou objeto, então normalizamos:
     const liveDataArray = Array.isArray(liveJson.liveData)
       ? liveJson.liveData
       : liveJson.liveData
@@ -392,38 +392,57 @@ export async function loadBuschGardensWithQueue(): Promise<FilteredLiveData> {
 
     console.log(`liveData is ${Array.isArray(liveJson.liveData) ? 'array' : 'object'}, normalized to ${liveDataArray.length} items`);
 
-    // Unimos todas as entities de todos os blocos de liveData
-    const liveEntities = liveDataArray.flatMap(
-      (ld: any) => ld.entities || []
-    );
+    const liveEntities = liveDataArray.flatMap((ld: any) => ld.entities || []);
 
     console.log(`Loaded ${liveEntities.length} live entities for Busch Gardens`);
 
-    // 3. Criar mapa: id -> waitTime (minutos)
+    // 3) Mapas de fila: por id/entityId e por externalId
     const waitTimeById: Record<string, number> = {};
-    liveEntities.forEach((e: any) => {
-      // alguns retornos usam "entityId" em vez de "id"
-      const entityId = e.id || e.entityId;
+    const waitTimeByExternalId: Record<string, number> = {};
 
+    liveEntities.forEach((e: any) => {
       const standby = e.queue?.STANDBY;
-      if (
-        entityId &&
-        standby &&
-        typeof standby.waitTime === "number"
-      ) {
-        waitTimeById[entityId] = standby.waitTime;
-        console.log(`Found wait time for ${entityId}: ${standby.waitTime} min`);
+      if (!standby || typeof standby.waitTime !== "number") return;
+
+      const minutes = standby.waitTime;
+      const entityId = e.id || e.entityId;
+      const externalId = e.externalId;
+
+      if (entityId) {
+        waitTimeById[entityId] = minutes;
+        console.log(`Found wait time for ${entityId}: ${minutes} min`);
+      }
+      if (externalId) {
+        waitTimeByExternalId[externalId] = minutes;
+        console.log(`Found wait time for externalId ${externalId}: ${minutes} min`);
       }
     });
 
-    console.log(`Found wait times for ${Object.keys(waitTimeById).length} attractions`);
+    console.log(`Found wait times for ${Object.keys(waitTimeById).length} attractions by ID`);
+    console.log(`Found wait times for ${Object.keys(waitTimeByExternalId).length} attractions by externalId`);
 
-    // 4. Anexar waitTime a cada item de children
+    // 4) Anexar waitTime/queueTime a cada item
     const attachWaitTime = (item: ChildEntity): EnrichedEntity => {
-      const waitTime = waitTimeById[item.id];
+      const byId = waitTimeById[item.id];
+      const byExternal = item.externalId
+        ? waitTimeByExternalId[item.externalId]
+        : null;
+
+      const waitTime =
+        typeof byId === "number"
+          ? byId
+          : typeof byExternal === "number"
+          ? byExternal
+          : null;
+
+      if (waitTime !== null) {
+        console.log(`Matched wait time for ${item.name}: ${waitTime} min (by ${byId !== undefined ? 'id' : 'externalId'})`);
+      }
+
       return {
-        ...enrichChildEntity(item, typeof waitTime === "number" ? waitTime : null),
-        waitTime: typeof waitTime === "number" ? waitTime : null,
+        ...enrichChildEntity(item, waitTime),
+        waitTime,          // pra gente usar
+        queueTime: waitTime, // pra bater com componentes que esperem outro nome
       };
     };
 
