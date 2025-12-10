@@ -6,7 +6,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Image,
   Platform,
   ActivityIndicator,
 } from 'react-native';
@@ -14,7 +13,6 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { getParkById } from '@/data/parksData';
 import { loadParkLiveData, loadBuschGardensContent, EnrichedEntity, BUSCH_GARDENS } from '@/services/themeParksApi';
-import { colors } from '@/styles/commonStyles';
 import { IconSymbol } from '@/components/IconSymbol';
 import { useItinerary } from '@/contexts/ItineraryContext';
 
@@ -104,8 +102,8 @@ export default function ParkContentScreen() {
         queue: { STANDBY: { waitTime: 45 } },
         attractionStyle: ['radical', 'simulator'],
         intensity: 'high',
-        summary: 'Atração radical com emoção e adrenalina do início ao fim!',
-        queueStatus: 'medium',
+        summary: 'Montanha-russa no escuro com efeitos espaciais e muita emoção!',
+        queueStatus: 'long',
       },
       {
         id: 'mock-2',
@@ -115,7 +113,7 @@ export default function ParkContentScreen() {
         queue: { STANDBY: { waitTime: 25 } },
         attractionStyle: ['family'],
         intensity: 'low',
-        summary: 'Atração clássica que encanta visitantes de todas as idades.',
+        summary: 'Aventura aquática clássica com piratas, tesouros e canhões.',
         queueStatus: 'medium',
       },
       {
@@ -123,11 +121,11 @@ export default function ParkContentScreen() {
         name: 'Haunted Mansion',
         entityType: 'ATTRACTION',
         status: 'OPERATING',
-        queue: { STANDBY: { waitTime: 30 } },
+        queue: { STANDBY: { waitTime: 8 } },
         attractionStyle: ['family'],
         intensity: 'low',
-        summary: 'Atração clássica que encanta visitantes de todas as idades.',
-        queueStatus: 'medium',
+        summary: 'Mansão assombrada com fantasmas divertidos e efeitos especiais.',
+        queueStatus: 'short',
       },
       {
         id: 'mock-4',
@@ -137,8 +135,8 @@ export default function ParkContentScreen() {
         queue: { STANDBY: { waitTime: 15 } },
         attractionStyle: ['kids', 'family'],
         intensity: 'low',
-        summary: 'Atração perfeita para os pequenos se divertirem com segurança.',
-        queueStatus: 'short',
+        summary: 'Voe com o Dumbo em círculos mágicos, perfeito para os pequenos.',
+        queueStatus: 'medium',
       },
     ];
 
@@ -148,14 +146,14 @@ export default function ParkContentScreen() {
         name: "Be Our Guest Restaurant",
         entityType: 'RESTAURANT',
         status: 'OPERATING',
-        summary: 'Restaurante com opções deliciosas para toda a família.',
+        summary: 'Jantar no castelo da Fera com pratos franceses requintados.',
       },
       {
         id: 'mock-r2',
         name: "Cinderella's Royal Table",
         entityType: 'RESTAURANT',
         status: 'OPERATING',
-        summary: 'Restaurante com opções deliciosas para toda a família.',
+        summary: 'Refeição real no castelo da Cinderela com princesas Disney.',
       },
     ];
 
@@ -166,7 +164,7 @@ export default function ParkContentScreen() {
         entityType: 'PARADE',
         status: 'OPERATING',
         attractionStyle: ['show'],
-        summary: 'Desfile espetacular com personagens e carros alegóricos.',
+        summary: 'Desfile colorido com personagens Disney e carros alegóricos gigantes.',
       },
       {
         id: 'mock-s2',
@@ -174,7 +172,7 @@ export default function ParkContentScreen() {
         entityType: 'FIREWORKS',
         status: 'OPERATING',
         attractionStyle: ['show'],
-        summary: 'Show de fogos de artifício deslumbrante que ilumina o céu.',
+        summary: 'Espetáculo de fogos com projeções no castelo e trilha emocionante.',
       },
     ];
 
@@ -226,10 +224,10 @@ export default function ParkContentScreen() {
   };
 
   const getWaitTimeColor = (waitTime?: number) => {
-    if (!waitTime) return colors.primary;
-    if (waitTime <= 20) return colors.queueGreen;
-    if (waitTime <= 45) return colors.queueYellow;
-    return colors.queueRed;
+    if (!waitTime) return '#10B981'; // Green for no wait
+    if (waitTime <= 10) return '#10B981'; // Green
+    if (waitTime <= 30) return '#F59E0B'; // Yellow/Amber
+    return '#EF4444'; // Red
   };
 
   const getFilteredData = () => {
@@ -253,6 +251,8 @@ export default function ParkContentScreen() {
                  name.includes('montu') ||
                  name.includes('kumba') ||
                  name.includes('sheikra') ||
+                 name.includes('gwazi') ||
+                 name.includes('hunt') ||
                  item.attractionStyle?.includes('radical');
         case 'family':
           return name.includes('safari') || 
@@ -263,6 +263,8 @@ export default function ParkContentScreen() {
         case 'kids':
           return name.includes('kiddie') || 
                  name.includes('junior') ||
+                 name.includes('sesame') ||
+                 name.includes('elmo') ||
                  item.attractionStyle?.includes('kids');
         default:
           return item.attractionStyle?.includes(activeFilter);
@@ -300,61 +302,57 @@ export default function ParkContentScreen() {
     }
   };
 
-  const renderItem = (item: EnrichedEntity) => {
+  const renderItem = (item: EnrichedEntity, index: number) => {
     const inItinerary = isInItinerary(item.id);
     const waitTime = item.queue?.STANDBY?.waitTime;
 
     return (
       <TouchableOpacity
-        key={item.id}
-        activeOpacity={0.8}
+        key={index}
+        activeOpacity={0.7}
         onPress={() => handleItemPress(item)}
       >
         <View style={styles.itemCard}>
-          <View style={styles.itemHeader}>
-            <View style={styles.itemInfo}>
+          <View style={styles.itemContent}>
+            <View style={styles.itemHeader}>
               <Text style={styles.itemName}>{item.name}</Text>
               
-              {/* Summary - only show for Busch Gardens or if available */}
-              {item.summary && (
-                <Text style={styles.itemSummary} numberOfLines={2}>
-                  {item.summary}
-                </Text>
-              )}
-
-              {/* Attraction Styles - only for attractions tab */}
-              {activeTab === 'attractions' && item.attractionStyle && item.attractionStyle.length > 0 && (
-                <View style={styles.stylesContainer}>
-                  {item.attractionStyle.map((style, index) => (
-                    <View key={index} style={styles.styleBadge}>
-                      <Text style={styles.styleBadgeText}>{style}</Text>
-                    </View>
-                  ))}
+              {/* Wait Time Badge - only for attractions with wait time */}
+              {activeTab === 'attractions' && waitTime !== undefined && waitTime !== null && (
+                <View style={[styles.waitTimeBadge, { backgroundColor: getWaitTimeColor(waitTime) }]}>
+                  <IconSymbol
+                    ios_icon_name="clock.fill"
+                    android_material_icon_name="schedule"
+                    size={12}
+                    color="#FFFFFF"
+                  />
+                  <Text style={styles.waitTimeText}>{waitTime} min</Text>
                 </View>
-              )}
-
-              {/* Status */}
-              {item.status && (
-                <Text style={[
-                  styles.itemStatus,
-                  item.status === 'OPERATING' && styles.itemStatusOperating,
-                  item.status === 'DOWN' && styles.itemStatusDown,
-                  item.status === 'CLOSED' && styles.itemStatusClosed,
-                ]}>
-                  {item.status === 'OPERATING' ? 'Operando' : item.status === 'DOWN' ? 'Fora de operação' : 'Fechado'}
-                </Text>
               )}
             </View>
 
-            {waitTime !== undefined && (
-              <View style={[styles.waitTimeBadge, { backgroundColor: getWaitTimeColor(waitTime) }]}>
-                <IconSymbol
-                  ios_icon_name="clock.fill"
-                  android_material_icon_name="schedule"
-                  size={14}
-                  color={colors.textDark}
-                />
-                <Text style={styles.waitTimeText}>{waitTime} min</Text>
+            {/* Summary - unique description for each attraction */}
+            {item.summary && (
+              <Text style={styles.itemSummary} numberOfLines={2}>
+                {item.summary}
+              </Text>
+            )}
+
+            {/* Attraction Styles - only for attractions tab */}
+            {activeTab === 'attractions' && item.attractionStyle && item.attractionStyle.length > 0 && (
+              <View style={styles.stylesContainer}>
+                {item.attractionStyle.slice(0, 3).map((style, styleIndex) => (
+                  <View key={styleIndex} style={styles.styleBadge}>
+                    <Text style={styles.styleBadgeText}>
+                      {style === 'radical' ? '🎢 Radical' :
+                       style === 'family' ? '👨‍👩‍👧 Família' :
+                       style === 'kids' ? '🧸 Infantil' :
+                       style === 'water' ? '💧 Aquática' :
+                       style === 'simulator' ? '🎮 Simulador' :
+                       style === 'show' ? '🎭 Show' : style}
+                    </Text>
+                  </View>
+                ))}
               </View>
             )}
           </View>
@@ -365,13 +363,13 @@ export default function ParkContentScreen() {
             disabled={inItinerary}
           >
             <IconSymbol
-              ios_icon_name={inItinerary ? "checkmark" : "plus"}
-              android_material_icon_name={inItinerary ? "check" : "add"}
-              size={16}
-              color={inItinerary ? colors.queueGreen : colors.textDark}
+              ios_icon_name={inItinerary ? "checkmark.circle.fill" : "plus.circle"}
+              android_material_icon_name={inItinerary ? "check-circle" : "add-circle"}
+              size={20}
+              color={inItinerary ? '#10B981' : '#6A00F5'}
             />
             <Text style={[styles.addButtonText, inItinerary && styles.addButtonTextAdded]}>
-              {inItinerary ? 'No Roteiro' : 'Adicionar ao Roteiro'}
+              {inItinerary ? 'No Roteiro' : 'Adicionar'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -408,9 +406,6 @@ export default function ParkContentScreen() {
         </TouchableOpacity>
         <View style={styles.headerContent}>
           <Text style={styles.headerTitle}>{park.shortName}</Text>
-          {isBuschGardens && (
-            <Text style={styles.headerSubtitle}>Dados via /children</Text>
-          )}
         </View>
         <View style={styles.headerPlaceholder} />
       </LinearGradient>
@@ -464,10 +459,13 @@ export default function ParkContentScreen() {
                     ios_icon_name={icon.ios}
                     android_material_icon_name={icon.android}
                     size={16}
-                    color={activeFilter === filter ? colors.textDark : colors.text}
+                    color={activeFilter === filter ? '#FFFFFF' : '#6B7280'}
                   />
                   <Text style={[styles.filterChipText, activeFilter === filter && styles.filterChipTextActive]}>
-                    {filter === 'all' ? 'Todos' : filter.charAt(0).toUpperCase() + filter.slice(1)}
+                    {filter === 'all' ? 'Todos' : 
+                     filter === 'radical' ? 'Radical' :
+                     filter === 'family' ? 'Família' :
+                     filter === 'kids' ? 'Infantil' : filter}
                   </Text>
                 </TouchableOpacity>
               </React.Fragment>
@@ -487,7 +485,7 @@ export default function ParkContentScreen() {
               ios_icon_name="exclamationmark.triangle.fill"
               android_material_icon_name="warning"
               size={20}
-              color={colors.queueYellow}
+              color="#F59E0B"
             />
             <Text style={styles.errorBannerText}>{error}</Text>
           </View>
@@ -495,9 +493,9 @@ export default function ParkContentScreen() {
 
         {loading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={colors.primary} />
+            <ActivityIndicator size="large" color="#6A00F5" />
             <Text style={styles.loadingText}>
-              {isBuschGardens ? 'Carregando dados do Busch Gardens...' : 'Carregando dados ao vivo...'}
+              Carregando dados do parque...
             </Text>
           </View>
         ) : (
@@ -508,14 +506,14 @@ export default function ParkContentScreen() {
                   ios_icon_name="exclamationmark.circle"
                   android_material_icon_name="info"
                   size={48}
-                  color="#999"
+                  color="#9CA3AF"
                 />
                 <Text style={styles.emptyText}>
                   Nenhum item disponível nesta categoria
                 </Text>
               </View>
             ) : (
-              filteredData.map(item => renderItem(item))
+              filteredData.map((item, index) => renderItem(item, index))
             )}
           </>
         )}
@@ -530,7 +528,7 @@ export default function ParkContentScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: '#F9FAFB',
   },
   header: {
     paddingTop: Platform.OS === 'android' ? 48 : 60,
@@ -555,35 +553,32 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontFamily: 'Poppins_700Bold',
   },
-  headerSubtitle: {
-    fontSize: 11,
-    color: 'rgba(255, 255, 255, 0.7)',
-    fontFamily: 'Poppins_400Regular',
-    marginTop: 2,
-  },
   headerPlaceholder: {
     width: 40,
   },
   tabsContainer: {
     flexDirection: 'row',
-    backgroundColor: colors.card,
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 12,
     gap: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
   },
   tab: {
     flex: 1,
     paddingVertical: 10,
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 10,
+    backgroundColor: '#F3F4F6',
   },
   tabActive: {
-    backgroundColor: colors.primary,
+    backgroundColor: '#6A00F5',
   },
   tabText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
-    color: '#999',
+    color: '#6B7280',
     fontFamily: 'Poppins_600SemiBold',
   },
   tabTextActive: {
@@ -591,29 +586,35 @@ const styles = StyleSheet.create({
   },
   filtersContainer: {
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 8,
+    paddingVertical: 16,
+    gap: 10,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
   },
   filterChip: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 8,
-    paddingHorizontal: 14,
+    paddingHorizontal: 16,
     borderRadius: 20,
-    backgroundColor: colors.card,
+    backgroundColor: '#F3F4F6',
     gap: 6,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
   filterChipActive: {
-    backgroundColor: colors.accent,
+    backgroundColor: '#6A00F5',
+    borderColor: '#6A00F5',
   },
   filterChipText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
-    color: colors.text,
+    color: '#6B7280',
     fontFamily: 'Poppins_600SemiBold',
   },
   filterChipTextActive: {
-    color: colors.textDark,
+    color: '#FFFFFF',
   },
   scrollContent: {
     padding: 16,
@@ -621,16 +622,18 @@ const styles = StyleSheet.create({
   errorBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 195, 0, 0.1)',
-    padding: 12,
+    backgroundColor: '#FEF3C7',
+    padding: 14,
     borderRadius: 12,
     marginBottom: 16,
     gap: 12,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
   },
   errorBannerText: {
     flex: 1,
     fontSize: 13,
-    color: colors.queueYellow,
+    color: '#92400E',
     fontFamily: 'Poppins_400Regular',
   },
   loadingContainer: {
@@ -640,7 +643,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
-    color: '#999',
+    color: '#6B7280',
     marginTop: 16,
     fontFamily: 'Poppins_400Regular',
   },
@@ -651,116 +654,110 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#999',
+    color: '#6B7280',
     marginTop: 16,
     textAlign: 'center',
     fontFamily: 'Poppins_400Regular',
   },
   itemCard: {
-    backgroundColor: colors.card,
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 16,
+    padding: 18,
     marginBottom: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
     elevation: 3,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+  },
+  itemContent: {
+    marginBottom: 14,
   },
   itemHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 12,
-  },
-  itemInfo: {
-    flex: 1,
-    marginRight: 12,
+    marginBottom: 8,
+    gap: 12,
   },
   itemName: {
-    fontSize: 16,
+    flex: 1,
+    fontSize: 18,
     fontWeight: '700',
-    color: colors.text,
-    marginBottom: 6,
+    color: '#111827',
+    lineHeight: 24,
     fontFamily: 'Poppins_700Bold',
-  },
-  itemSummary: {
-    fontSize: 13,
-    color: '#999',
-    marginBottom: 8,
-    lineHeight: 18,
-    fontFamily: 'Poppins_400Regular',
-  },
-  stylesContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 6,
-    marginBottom: 6,
-  },
-  styleBadge: {
-    backgroundColor: 'rgba(106, 0, 245, 0.15)',
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    borderRadius: 8,
-  },
-  styleBadgeText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: colors.primary,
-    fontFamily: 'Poppins_600SemiBold',
-  },
-  itemStatus: {
-    fontSize: 12,
-    fontFamily: 'Poppins_400Regular',
-  },
-  itemStatusOperating: {
-    color: colors.queueGreen,
-  },
-  itemStatusDown: {
-    color: colors.queueRed,
-  },
-  itemStatusClosed: {
-    color: '#999',
   },
   waitTimeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 6,
     paddingHorizontal: 10,
-    borderRadius: 10,
+    borderRadius: 12,
     gap: 4,
   },
   waitTimeText: {
     fontSize: 13,
     fontWeight: '700',
-    color: colors.textDark,
+    color: '#FFFFFF',
     fontFamily: 'Poppins_700Bold',
+  },
+  itemSummary: {
+    fontSize: 14,
+    color: '#6B7280',
+    marginBottom: 10,
+    lineHeight: 20,
+    fontFamily: 'Poppins_400Regular',
+  },
+  stylesContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  styleBadge: {
+    backgroundColor: '#EDE9FE',
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#DDD6FE',
+  },
+  styleBadgeText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6A00F5',
+    fontFamily: 'Poppins_600SemiBold',
   },
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.accent,
-    paddingVertical: 10,
+    backgroundColor: '#F3F4F6',
+    paddingVertical: 12,
     paddingHorizontal: 16,
-    borderRadius: 10,
-    gap: 6,
+    borderRadius: 12,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
   addButtonAdded: {
-    backgroundColor: 'rgba(198, 255, 0, 0.2)',
+    backgroundColor: '#D1FAE5',
+    borderColor: '#A7F3D0',
   },
   addButtonText: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
-    color: colors.textDark,
+    color: '#6A00F5',
     fontFamily: 'Poppins_600SemiBold',
   },
   addButtonTextAdded: {
-    color: colors.queueGreen,
+    color: '#10B981',
   },
   errorText: {
     fontSize: 16,
-    color: '#999',
+    color: '#6B7280',
     textAlign: 'center',
     marginTop: 40,
     fontFamily: 'Poppins_400Regular',

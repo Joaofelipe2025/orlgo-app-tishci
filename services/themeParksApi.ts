@@ -79,7 +79,10 @@ function determineAttractionStyle(entity: LiveEntity | ChildEntity): string[] {
     name.includes('kumba') ||
     name.includes('sheikra') ||
     name.includes('falcon') ||
-    name.includes('phoenix')
+    name.includes('phoenix') ||
+    name.includes('hunt') ||
+    name.includes('iron gwazi') ||
+    name.includes('gwazi')
   ) {
     styles.push('radical');
   }
@@ -97,7 +100,8 @@ function determineAttractionStyle(entity: LiveEntity | ChildEntity): string[] {
     name.includes('buzz') ||
     name.includes('train') ||
     name.includes('skyride') ||
-    name.includes('serengeti')
+    name.includes('serengeti') ||
+    name.includes('express')
   ) {
     styles.push('family');
   }
@@ -110,7 +114,11 @@ function determineAttractionStyle(entity: LiveEntity | ChildEntity): string[] {
     name.includes('carpet') ||
     name.includes('tea') ||
     name.includes('kiddie') ||
-    name.includes('junior')
+    name.includes('junior') ||
+    name.includes('sesame') ||
+    name.includes('elmo') ||
+    name.includes('cookie') ||
+    name.includes('air grover')
   ) {
     styles.push('kids');
   }
@@ -130,7 +138,8 @@ function determineAttractionStyle(entity: LiveEntity | ChildEntity): string[] {
     name.includes('flight') ||
     name.includes('soarin') ||
     name.includes('star tours') ||
-    name.includes('simulator')
+    name.includes('simulator') ||
+    name.includes('battle')
   ) {
     styles.push('simulator');
   }
@@ -142,7 +151,8 @@ function determineAttractionStyle(entity: LiveEntity | ChildEntity): string[] {
     name.includes('kali') ||
     name.includes('water') ||
     name.includes('flume') ||
-    name.includes('river')
+    name.includes('river') ||
+    name.includes('congo')
   ) {
     styles.push('water');
   }
@@ -162,51 +172,153 @@ function determineIntensity(styles: string[]): 'low' | 'medium' | 'high' {
   return 'low';
 }
 
-// Function to generate a brief summary
+// Function to generate unique, context-aware descriptions for each attraction
 function generateSummary(entity: LiveEntity | ChildEntity, styles: string[]): string {
-  const name = entity.name;
+  const name = entity.name.toLowerCase();
 
+  // Restaurants
   if (entity.entityType === 'RESTAURANT') {
-    return `Restaurante com opções deliciosas para toda a família.`;
+    if (name.includes('zambia') || name.includes('smokehouse')) {
+      return 'Sabores defumados e pratos fartos em ambiente temático africano.';
+    }
+    if (name.includes('dragon') || name.includes('fire')) {
+      return 'Culinária asiática com pratos saborosos e ambiente acolhedor.';
+    }
+    if (name.includes('garden') || name.includes('oasis')) {
+      return 'Refeições leves e refrescantes em meio a jardins tropicais.';
+    }
+    if (name.includes('grill') || name.includes('bbq')) {
+      return 'Carnes grelhadas e especialidades americanas para toda família.';
+    }
+    return 'Deliciosas opções gastronômicas para recarregar as energias.';
   }
 
+  // Shows and Entertainment
   if (entity.entityType === 'SHOW' || entity.entityType === 'ENTERTAINMENT') {
-    return `Show ao vivo com apresentações incríveis e momentos mágicos.`;
+    if (name.includes('ice') || name.includes('skating')) {
+      return 'Espetáculo no gelo com acrobacias e coreografias impressionantes.';
+    }
+    if (name.includes('animal') || name.includes('bird') || name.includes('wildlife')) {
+      return 'Apresentação educativa com animais exóticos e seus cuidadores.';
+    }
+    if (name.includes('music') || name.includes('concert')) {
+      return 'Show musical ao vivo com performances energéticas e envolventes.';
+    }
+    return 'Apresentação ao vivo repleta de entretenimento e momentos especiais.';
   }
 
   if (entity.entityType === 'PARADE') {
-    return `Desfile espetacular com personagens e carros alegóricos.`;
+    return 'Desfile colorido com personagens, música e muita alegria.';
   }
 
   if (entity.entityType === 'FIREWORKS') {
-    return `Show de fogos de artifício deslumbrante que ilumina o céu.`;
+    return 'Espetáculo pirotécnico que ilumina o céu com cores vibrantes.';
   }
 
-  // Attraction summaries based on style
+  // Specific Busch Gardens attractions
+  if (name.includes('iron gwazi') || name.includes('gwazi')) {
+    return 'Montanha-russa híbrida mais alta e rápida da América do Norte! Pura adrenalina.';
+  }
+
+  if (name.includes('sheikra')) {
+    return 'Queda livre de 61 metros em 90 graus! Uma das mais radicais do mundo.';
+  }
+
+  if (name.includes('montu')) {
+    return 'Montanha-russa invertida com loops intensos e velocidade extrema.';
+  }
+
+  if (name.includes('kumba')) {
+    return 'Clássica montanha-russa com loops gigantes e força G impressionante.';
+  }
+
+  if (name.includes('cheetah hunt')) {
+    return 'Acelere como um guepardo em trilhos que cortam o parque em alta velocidade.';
+  }
+
+  if (name.includes('tigris')) {
+    return 'Montanha-russa de lançamento com looping invertido e muita emoção.';
+  }
+
+  if (name.includes('cobra')) {
+    return 'Giros e inversões em uma montanha-russa compacta e intensa.';
+  }
+
+  if (name.includes('falcon')) {
+    return 'Voo livre com asas delta simulando o voo de um falcão sobre o parque.';
+  }
+
+  if (name.includes('phoenix')) {
+    return 'Torre de queda livre com vistas panorâmicas antes da descida emocionante.';
+  }
+
+  if (name.includes('serengeti') && name.includes('safari')) {
+    return 'Safari autêntico com girafas, zebras e rinocerontes em habitat natural.';
+  }
+
+  if (name.includes('skyride')) {
+    return 'Teleférico panorâmico com vistas aéreas incríveis do parque e animais.';
+  }
+
+  if (name.includes('congo river')) {
+    return 'Descida de corredeiras que molha bastante! Perfeita para dias quentes.';
+  }
+
+  if (name.includes('stanley falls')) {
+    return 'Aventura aquática com quedas refrescantes em meio à floresta tropical.';
+  }
+
+  if (name.includes('sesame') || name.includes('elmo') || name.includes('cookie')) {
+    return 'Diversão garantida para os pequenos com personagens da Vila Sésamo.';
+  }
+
+  if (name.includes('air grover')) {
+    return 'Montanha-russa infantil perfeita para a primeira experiência radical.';
+  }
+
+  if (name.includes('train') && styles.includes('family')) {
+    return 'Passeio relaxante de trem com vistas dos animais e paisagens do parque.';
+  }
+
+  if (name.includes('carousel')) {
+    return 'Carrossel clássico com cavalos decorados, ideal para toda a família.';
+  }
+
+  // Generic descriptions based on style
   if (styles.includes('radical')) {
-    return `Atração radical com emoção e adrenalina do início ao fim!`;
+    if (name.includes('coaster')) {
+      return 'Montanha-russa eletrizante com loops, quedas e velocidade de tirar o fôlego.';
+    }
+    if (name.includes('tower') || name.includes('drop')) {
+      return 'Torre de queda livre com adrenalina pura e vistas espetaculares.';
+    }
+    return 'Atração radical repleta de emoção, velocidade e momentos intensos.';
   }
 
   if (styles.includes('simulator')) {
-    return `Experiência imersiva em simulador de última geração.`;
+    return 'Simulador imersivo com efeitos especiais e aventura cinematográfica.';
   }
 
   if (styles.includes('water')) {
-    return `Aventura aquática refrescante com momentos emocionantes.`;
+    return 'Atração aquática refrescante que molha e diverte em dias quentes.';
   }
 
   if (styles.includes('kids')) {
-    return `Atração perfeita para os pequenos se divertirem com segurança.`;
+    return 'Atração segura e divertida, perfeita para crianças pequenas e famílias.';
   }
 
-  return `Atração clássica que encanta visitantes de todas as idades.`;
+  if (styles.includes('family')) {
+    return 'Experiência encantadora que agrada visitantes de todas as idades.';
+  }
+
+  return 'Atração imperdível com diversão e entretenimento para todos.';
 }
 
 // Function to determine queue status based on wait time
 function getQueueStatus(waitTime?: number): 'short' | 'medium' | 'long' {
   if (!waitTime) return 'short';
-  if (waitTime <= 20) return 'short';
-  if (waitTime <= 45) return 'medium';
+  if (waitTime <= 10) return 'short';
+  if (waitTime <= 30) return 'medium';
   return 'long';
 }
 
@@ -271,6 +383,35 @@ export async function loadBuschGardensContent(): Promise<FilteredLiveData> {
     const shows = children
       .filter((c) => c.entityType === "SHOW")
       .map(enrichChildEntity);
+
+    // Now fetch live data to get wait times
+    try {
+      const liveRes = await fetch(`${THEMEPARKS_API}/${BUSCH_GARDENS.id}/live`);
+      if (liveRes.ok) {
+        const liveJson: LiveDataResponse = await liveRes.json();
+        const liveEntities = liveJson.liveData?.entities || [];
+
+        // Create a map of live data by ID
+        const liveDataMap = new Map<string, LiveEntity>();
+        liveEntities.forEach(entity => {
+          liveDataMap.set(entity.id, entity);
+        });
+
+        // Merge wait times into attractions
+        attractions.forEach(attraction => {
+          const liveData = liveDataMap.get(attraction.id);
+          if (liveData) {
+            attraction.queue = liveData.queue;
+            attraction.status = liveData.status;
+            attraction.queueStatus = getQueueStatus(liveData.queue?.STANDBY?.waitTime);
+          }
+        });
+
+        console.log('Merged live wait times with attractions');
+      }
+    } catch (liveError) {
+      console.log('Could not fetch live data, using children data only:', liveError);
+    }
 
     return { attractions, restaurants, shows };
   } catch (error) {
