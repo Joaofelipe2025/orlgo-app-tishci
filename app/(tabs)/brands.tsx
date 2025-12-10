@@ -28,14 +28,14 @@ export default function BrandsScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Compact Header */}
+      {/* Compact Header with white text */}
       <LinearGradient
         colors={['#6A00F5', '#9A00FF']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.header}
       >
-        <Text style={styles.headerTitle}>Marcas</Text>
+        <Text style={styles.headerTitle}>Parques</Text>
         <Text style={styles.headerSubtitle}>Escolha sua marca favorita</Text>
       </LinearGradient>
 
@@ -69,7 +69,7 @@ export default function BrandsScreen() {
                           ios_icon_name="building.2.fill"
                           android_material_icon_name="domain"
                           size={16}
-                          color={colors.accent}
+                          color="#FFFFFF"
                         />
                         <Text style={styles.parksCountText}>
                           {brand.parks.length} {brand.parks.length === 1 ? 'parque' : 'parques'}
@@ -93,23 +93,23 @@ export default function BrandsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: '#FFFFFF',
   },
   header: {
     paddingTop: Platform.OS === 'android' ? 48 : 60,
-    paddingBottom: 20,
+    paddingBottom: 16,
     paddingHorizontal: 20,
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: '700',
     color: '#FFFFFF',
     marginBottom: 4,
     fontFamily: 'Poppins_700Bold',
   },
   headerSubtitle: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#FFFFFF',
     opacity: 0.9,
     fontFamily: 'Poppins_400Regular',
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
   brandName: {
     fontSize: 32,
     fontWeight: '700',
-    color: colors.accent,
+    color: '#FFFFFF',
     marginBottom: 8,
     fontFamily: 'Poppins_700Bold',
   },

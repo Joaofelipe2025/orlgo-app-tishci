@@ -292,7 +292,7 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Compact Header */}
+      {/* Compact Header with white text */}
       <LinearGradient
         colors={['#6A00F5', '#9A00FF']}
         start={{ x: 0, y: 0 }}
@@ -304,7 +304,7 @@ export default function ProfileScreen() {
             ios_icon_name="person.circle.fill"
             android_material_icon_name="account-circle"
             size={60}
-            color={colors.accent}
+            color="#FFFFFF"
           />
           <View style={styles.profileInfo}>
             <Text style={styles.profileName}>
@@ -368,11 +368,11 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: '#FFFFFF',
   },
   header: {
     paddingTop: Platform.OS === 'android' ? 48 : 60,
-    paddingBottom: 20,
+    paddingBottom: 16,
     paddingHorizontal: 20,
   },
   profileHeader: {
@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   profileName: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '700',
     color: '#FFFFFF',
     marginBottom: 4,
@@ -393,12 +393,12 @@ const styles = StyleSheet.create({
   loginButton: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.accent,
+    color: '#FFFFFF',
     fontFamily: 'Poppins_600SemiBold',
   },
   tabsContainer: {
     flexDirection: 'row',
-    backgroundColor: colors.card,
+    backgroundColor: '#F3F4F6',
     paddingHorizontal: 16,
     paddingVertical: 8,
     gap: 8,
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   infoSection: {
-    backgroundColor: colors.card,
+    backgroundColor: '#F9FAFB',
     borderRadius: 12,
     padding: 16,
   },
@@ -440,14 +440,14 @@ const styles = StyleSheet.create({
   },
   infoValue: {
     fontSize: 16,
-    color: colors.text,
+    color: '#1A1A1A',
     fontFamily: 'Poppins_600SemiBold',
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.card,
+    backgroundColor: '#F9FAFB',
     paddingVertical: 14,
     borderRadius: 12,
     gap: 10,
@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
   emptyStateText: {
     fontSize: 20,
     fontWeight: '700',
-    color: colors.text,
+    color: '#1A1A1A',
     marginTop: 16,
     marginBottom: 8,
     fontFamily: 'Poppins_700Bold',
@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: colors.card,
+    backgroundColor: '#F9FAFB',
     padding: 16,
     borderRadius: 12,
   },
@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
   preferenceTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.text,
+    color: '#1A1A1A',
     marginBottom: 2,
     fontFamily: 'Poppins_600SemiBold',
   },
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.text,
+    color: '#1A1A1A',
     marginBottom: 12,
     fontFamily: 'Poppins_700Bold',
   },
@@ -549,7 +549,7 @@ const styles = StyleSheet.create({
   helpCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.card,
+    backgroundColor: '#F9FAFB',
     padding: 16,
     borderRadius: 12,
     gap: 12,
@@ -560,7 +560,7 @@ const styles = StyleSheet.create({
   helpCardTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.text,
+    color: '#1A1A1A',
     marginBottom: 2,
     fontFamily: 'Poppins_600SemiBold',
   },
@@ -572,7 +572,7 @@ const styles = StyleSheet.create({
   supportCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.card,
+    backgroundColor: '#F9FAFB',
     padding: 16,
     borderRadius: 12,
     gap: 12,
@@ -583,7 +583,7 @@ const styles = StyleSheet.create({
   supportCardTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.text,
+    color: '#1A1A1A',
     marginBottom: 2,
     fontFamily: 'Poppins_600SemiBold',
   },

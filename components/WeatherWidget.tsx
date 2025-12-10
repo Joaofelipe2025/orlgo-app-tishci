@@ -64,7 +64,7 @@ export function WeatherWidget() {
         end={{ x: 1, y: 1 }}
         style={styles.container}
       >
-        <ActivityIndicator size="large" color="#C6FF00" />
+        <ActivityIndicator size="large" color="#FFFFFF" />
       </LinearGradient>
     );
   }
@@ -85,7 +85,7 @@ export function WeatherWidget() {
           ios_icon_name="location.fill"
           android_material_icon_name="location-on"
           size={16}
-          color="#C6FF00"
+          color="#FFFFFF"
         />
         <Text style={styles.location}>Orlando, FL</Text>
       </View>
@@ -97,7 +97,7 @@ export function WeatherWidget() {
             ios_icon_name="cloud.sun.fill"
             android_material_icon_name="wb-cloudy"
             size={64}
-            color="#C6FF00"
+            color="#FFFFFF"
           />
         </View>
         
@@ -124,7 +124,7 @@ export function WeatherWidget() {
                 ios_icon_name="sun.max.fill"
                 android_material_icon_name="wb-sunny"
                 size={24}
-                color="#C6FF00"
+                color="#FFFFFF"
               />
               <Text style={styles.forecastTemp}>{item.temp}°</Text>
             </View>
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   },
   location: {
     fontSize: 14,
-    color: '#C6FF00',
+    color: '#FFFFFF',
     fontWeight: '600',
     fontFamily: 'Poppins_600SemiBold',
   },

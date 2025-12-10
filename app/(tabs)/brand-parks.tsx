@@ -39,8 +39,8 @@ export default function BrandParksScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.dark ? colors.background : '#FFFFFF' }]}>
-      {/* Header */}
+    <View style={[styles.container, { backgroundColor: theme.dark ? '#F9FAFB' : '#FFFFFF' }]}>
+      {/* Compact Header with white text */}
       <LinearGradient
         colors={['#6A00F5', '#9A00FF']}
         start={{ x: 0, y: 0 }}
@@ -51,8 +51,8 @@ export default function BrandParksScreen() {
           <IconSymbol
             ios_icon_name="chevron.left"
             android_material_icon_name="arrow-back"
-            size={28}
-            color="#C6FF00"
+            size={24}
+            color="#FFFFFF"
           />
         </TouchableOpacity>
         <View style={styles.headerContent}>
@@ -101,7 +101,7 @@ export default function BrandParksScreen() {
                         ios_icon_name="chevron.right"
                         android_material_icon_name="chevron-right"
                         size={20}
-                        color={colors.textDark}
+                        color="#FFFFFF"
                       />
                     </View>
                   </View>
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingTop: 60,
-    paddingBottom: 24,
+    paddingBottom: 16,
     paddingHorizontal: 16,
     shadowColor: '#6A00F5',
     shadowOffset: { width: 0, height: 4 },
@@ -136,19 +136,19 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   headerContent: {
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: '700',
-    color: '#C6FF00',
+    color: '#FFFFFF',
     marginBottom: 4,
   },
   headerSubtitle: {
-    fontSize: 16,
+    fontSize: 13,
     color: '#FFFFFF',
     opacity: 0.9,
   },
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
   parkName: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#C6FF00',
+    color: '#FFFFFF',
     marginBottom: 8,
   },
   parkDescription: {
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   ctaButton: {
-    backgroundColor: '#C6FF00',
+    backgroundColor: '#6A00F5',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 12,
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'flex-start',
-    shadowColor: '#C6FF00',
+    shadowColor: '#6A00F5',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.5,
     shadowRadius: 12,
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
   ctaButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.textDark,
+    color: '#FFFFFF',
     marginRight: 8,
   },
 });
