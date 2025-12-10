@@ -1,6 +1,77 @@
 
 import { Brand, Park, Attraction } from '@/types/parkData';
 
+// ThemeParks API Configuration
+export const PARKS = [
+  // Disney Parks
+  {
+    id: '75ea578a-adc8-4116-a54d-dccb60765ef9',
+    name: 'Magic Kingdom',
+    brand: 'Disney',
+    slug: 'magickingdom',
+    location: { lat: 28.4177, lng: -81.5812 },
+    timezone: 'America/New_York',
+  },
+  {
+    id: '47f90d2c-e191-4239-a466-5892ef59a88b',
+    name: 'EPCOT',
+    brand: 'Disney',
+    slug: 'epcot',
+    location: { lat: 28.3747, lng: -81.5494 },
+    timezone: 'America/New_York',
+  },
+  {
+    id: '288747d1-8b4f-4a64-867e-ea7c9b27bad8',
+    name: 'Hollywood Studios',
+    brand: 'Disney',
+    slug: 'hollywoodstudios',
+    location: { lat: 28.3575, lng: -81.5582 },
+    timezone: 'America/New_York',
+  },
+  {
+    id: '1c84a229-8862-4648-9c71-378ddd2c7693',
+    name: 'Animal Kingdom',
+    brand: 'Disney',
+    slug: 'animalkingdom',
+    location: { lat: 28.3553, lng: -81.5901 },
+    timezone: 'America/New_York',
+  },
+  // Universal Parks
+  {
+    id: 'eb3f4560-2383-4a36-9152-6b3e5ed6bc57',
+    name: 'Universal Studios Florida',
+    brand: 'Universal',
+    slug: 'universalstudiosflorida',
+    location: { lat: 28.4793, lng: -81.4689 },
+    timezone: 'America/New_York',
+  },
+  {
+    id: '267615cc-8943-4c2a-ae2c-5da728ca591f',
+    name: 'Islands of Adventure',
+    brand: 'Universal',
+    slug: 'islandsofadventure',
+    location: { lat: 28.4719, lng: -81.4727 },
+    timezone: 'America/New_York',
+  },
+  {
+    id: 'fe78a026-b91b-470c-b906-9d2266b692da',
+    name: 'Volcano Bay',
+    brand: 'Universal',
+    slug: 'volcanobay',
+    location: { lat: 28.4626, lng: -81.4729 },
+    timezone: 'America/New_York',
+  },
+  // SeaWorld Parks
+  {
+    id: 'fc40c99a-be0a-42f4-a483-1e939db275c2',
+    name: 'Busch Gardens Tampa',
+    brand: 'SeaWorld Parks',
+    slug: 'buschgardenstampa',
+    location: { lat: 28.0374, lng: -82.42144 },
+    timezone: 'America/New_York',
+  },
+];
+
 export const brandsData: Brand[] = [
   {
     id: 'disney',
@@ -128,6 +199,7 @@ export const brandsData: Brand[] = [
         shortName: 'Busch Gardens',
         description: 'Aventuras africanas e montanhas-russas radicais!',
         image: 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=800',
+        apiEntityId: 'fc40c99a-be0a-42f4-a483-1e939db275c2',
         attractions: [],
       },
     ],
@@ -250,6 +322,14 @@ export function getAttractionById(attractionId: string): Attraction | undefined 
       const attraction = park.attractions.find(a => a.id === attractionId);
       if (attraction) return attraction;
     }
+  }
+  return undefined;
+}
+
+export function getParkByApiEntityId(apiEntityId: string): Park | undefined {
+  for (const brand of brandsData) {
+    const park = brand.parks.find(p => p.apiEntityId === apiEntityId);
+    if (park) return park;
   }
   return undefined;
 }

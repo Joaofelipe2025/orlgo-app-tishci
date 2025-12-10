@@ -28,7 +28,10 @@ export default function BrandParksScreen() {
 
   const handleParkPress = (parkId: string) => {
     console.log('Park pressed:', parkId);
-    router.push(`/(tabs)/park-detail?parkId=${parkId}`);
+    router.push({
+      pathname: '/(tabs)/park-content',
+      params: { parkId },
+    });
   };
 
   const handleBackPress = () => {

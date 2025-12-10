@@ -13,12 +13,13 @@ import {
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { getParkById } from '@/data/parksData';
-import { getLiveData, LiveEntity } from '@/services/themeParksApi';
+import { loadParkLiveData, EnrichedEntity } from '@/services/themeParksApi';
 import { colors } from '@/styles/commonStyles';
 import { IconSymbol } from '@/components/IconSymbol';
 import { useItinerary } from '@/contexts/ItineraryContext';
 
 type TabType = 'attractions' | 'restaurants' | 'shows';
+type FilterType = 'all' | 'radical' | 'family' | 'kids' | 'show' | 'simulator' | 'water';
 
 export default function ParkContentScreen() {
   const router = useRouter();
@@ -26,10 +27,11 @@ export default function ParkContentScreen() {
   const { addToItinerary, isInItinerary } = useItinerary();
 
   const [activeTab, setActiveTab] = useState<TabType>('attractions');
+  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [loading, setLoading] = useState(true);
-  const [attractions, setAttractions] = useState<LiveEntity[]>([]);
-  const [restaurants, setRestaurants] = useState<LiveEntity[]>([]);
-  const [shows, setShows] = useState<LiveEntity[]>([]);
+  const [attractions, setAttractions] = useState<EnrichedEntity[]>([]);
+  const [restaurants, setRestaurants] = useState<EnrichedEntity[]>([]);
+  const [shows, setShows] = useState<EnrichedEntity[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const park = parkId ? getParkById(parkId) : null;
@@ -50,10 +52,11 @@ export default function ParkContentScreen() {
     setError(null);
 
     try {
-      const data = await getLiveData(park.apiEntityId);
+      const data = await loadParkLiveData(park.apiEntityId);
       setAttractions(data.attractions);
       setRestaurants(data.restaurants);
       setShows(data.shows);
+      console.log(`Loaded ${data.attractions.length} attractions, ${data.restaurants.length} restaurants, ${data.shows.length} shows`);
     } catch (err) {
       console.error('Error loading live data:', err);
       setError('Erro ao carregar dados. Usando dados offline.');
@@ -65,13 +68,17 @@ export default function ParkContentScreen() {
 
   const loadMockData = () => {
     // Mock data as fallback
-    const mockAttractions: LiveEntity[] = [
+    const mockAttractions: EnrichedEntity[] = [
       {
         id: 'mock-1',
         name: 'Space Mountain',
         entityType: 'ATTRACTION',
         status: 'OPERATING',
         queue: { STANDBY: { waitTime: 45 } },
+        attractionStyle: ['radical', 'simulator'],
+        intensity: 'high',
+        summary: 'Atração radical com emoção e adrenalina do início ao fim!',
+        queueStatus: 'medium',
       },
       {
         id: 'mock-2',
@@ -79,6 +86,10 @@ export default function ParkContentScreen() {
         entityType: 'ATTRACTION',
         status: 'OPERATING',
         queue: { STANDBY: { waitTime: 25 } },
+        attractionStyle: ['family'],
+        intensity: 'low',
+        summary: 'Atração clássica que encanta visitantes de todas as idades.',
+        queueStatus: 'medium',
       },
       {
         id: 'mock-3',
@@ -86,36 +97,57 @@ export default function ParkContentScreen() {
         entityType: 'ATTRACTION',
         status: 'OPERATING',
         queue: { STANDBY: { waitTime: 30 } },
+        attractionStyle: ['family'],
+        intensity: 'low',
+        summary: 'Atração clássica que encanta visitantes de todas as idades.',
+        queueStatus: 'medium',
+      },
+      {
+        id: 'mock-4',
+        name: 'Dumbo the Flying Elephant',
+        entityType: 'ATTRACTION',
+        status: 'OPERATING',
+        queue: { STANDBY: { waitTime: 15 } },
+        attractionStyle: ['kids', 'family'],
+        intensity: 'low',
+        summary: 'Atração perfeita para os pequenos se divertirem com segurança.',
+        queueStatus: 'short',
       },
     ];
 
-    const mockRestaurants: LiveEntity[] = [
+    const mockRestaurants: EnrichedEntity[] = [
       {
         id: 'mock-r1',
         name: "Be Our Guest Restaurant",
         entityType: 'RESTAURANT',
         status: 'OPERATING',
+        summary: 'Restaurante com opções deliciosas para toda a família.',
       },
       {
         id: 'mock-r2',
         name: "Cinderella's Royal Table",
         entityType: 'RESTAURANT',
         status: 'OPERATING',
+        summary: 'Restaurante com opções deliciosas para toda a família.',
       },
     ];
 
-    const mockShows: LiveEntity[] = [
+    const mockShows: EnrichedEntity[] = [
       {
         id: 'mock-s1',
         name: 'Festival of Fantasy Parade',
-        entityType: 'SHOW',
+        entityType: 'PARADE',
         status: 'OPERATING',
+        attractionStyle: ['show'],
+        summary: 'Desfile espetacular com personagens e carros alegóricos.',
       },
       {
         id: 'mock-s2',
         name: 'Happily Ever After Fireworks',
-        entityType: 'SHOW',
+        entityType: 'FIREWORKS',
         status: 'OPERATING',
+        attractionStyle: ['show'],
+        summary: 'Show de fogos de artifício deslumbrante que ilumina o céu.',
       },
     ];
 
@@ -129,7 +161,7 @@ export default function ParkContentScreen() {
     router.back();
   };
 
-  const handleItemPress = (item: LiveEntity) => {
+  const handleItemPress = (item: EnrichedEntity) => {
     if (item.entityType === 'ATTRACTION') {
       router.push({
         pathname: '/(tabs)/attraction-detail',
@@ -143,7 +175,7 @@ export default function ParkContentScreen() {
     }
   };
 
-  const handleAddToItinerary = (item: LiveEntity) => {
+  const handleAddToItinerary = (item: EnrichedEntity) => {
     if (!park) return;
 
     addToItinerary({
@@ -162,7 +194,49 @@ export default function ParkContentScreen() {
     return colors.queueRed;
   };
 
-  const renderItem = (item: LiveEntity) => {
+  const getFilteredData = () => {
+    let data = getCurrentTabData();
+    
+    if (activeFilter === 'all') {
+      return data;
+    }
+
+    return data.filter(item => 
+      item.attractionStyle?.includes(activeFilter)
+    );
+  };
+
+  const getCurrentTabData = () => {
+    switch (activeTab) {
+      case 'attractions':
+        return attractions;
+      case 'restaurants':
+        return restaurants;
+      case 'shows':
+        return shows;
+    }
+  };
+
+  const getFilterIcon = (filter: FilterType) => {
+    switch (filter) {
+      case 'radical':
+        return { ios: 'bolt.fill', android: 'flash-on' };
+      case 'family':
+        return { ios: 'person.2.fill', android: 'people' };
+      case 'kids':
+        return { ios: 'figure.and.child.holdinghands', android: 'child-care' };
+      case 'show':
+        return { ios: 'theatermasks.fill', android: 'theater-comedy' };
+      case 'simulator':
+        return { ios: 'gamecontroller.fill', android: 'videogame-asset' };
+      case 'water':
+        return { ios: 'drop.fill', android: 'water-drop' };
+      default:
+        return { ios: 'square.grid.2x2', android: 'apps' };
+    }
+  };
+
+  const renderItem = (item: EnrichedEntity) => {
     const inItinerary = isInItinerary(item.id);
     const waitTime = item.queue?.STANDBY?.waitTime;
 
@@ -176,6 +250,26 @@ export default function ParkContentScreen() {
           <View style={styles.itemHeader}>
             <View style={styles.itemInfo}>
               <Text style={styles.itemName}>{item.name}</Text>
+              
+              {/* Summary */}
+              {item.summary && (
+                <Text style={styles.itemSummary} numberOfLines={2}>
+                  {item.summary}
+                </Text>
+              )}
+
+              {/* Attraction Styles */}
+              {item.attractionStyle && item.attractionStyle.length > 0 && (
+                <View style={styles.stylesContainer}>
+                  {item.attractionStyle.map((style, index) => (
+                    <View key={index} style={styles.styleBadge}>
+                      <Text style={styles.styleBadgeText}>{style}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              {/* Status */}
               {item.status && (
                 <Text style={[
                   styles.itemStatus,
@@ -221,17 +315,6 @@ export default function ParkContentScreen() {
     );
   };
 
-  const getCurrentTabData = () => {
-    switch (activeTab) {
-      case 'attractions':
-        return attractions;
-      case 'restaurants':
-        return restaurants;
-      case 'shows':
-        return shows;
-    }
-  };
-
   if (!park) {
     return (
       <View style={styles.container}>
@@ -239,6 +322,8 @@ export default function ParkContentScreen() {
       </View>
     );
   }
+
+  const filteredData = getFilteredData();
 
   return (
     <View style={styles.container}>
@@ -293,6 +378,37 @@ export default function ParkContentScreen() {
         </TouchableOpacity>
       </View>
 
+      {/* Filters (only for attractions) */}
+      {activeTab === 'attractions' && (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filtersContainer}
+        >
+          {(['all', 'radical', 'family', 'kids', 'show', 'simulator', 'water'] as FilterType[]).map((filter, index) => {
+            const icon = getFilterIcon(filter);
+            return (
+              <React.Fragment key={index}>
+                <TouchableOpacity
+                  style={[styles.filterChip, activeFilter === filter && styles.filterChipActive]}
+                  onPress={() => setActiveFilter(filter)}
+                >
+                  <IconSymbol
+                    ios_icon_name={icon.ios}
+                    android_material_icon_name={icon.android}
+                    size={16}
+                    color={activeFilter === filter ? colors.textDark : colors.text}
+                  />
+                  <Text style={[styles.filterChipText, activeFilter === filter && styles.filterChipTextActive]}>
+                    {filter === 'all' ? 'Todos' : filter.charAt(0).toUpperCase() + filter.slice(1)}
+                  </Text>
+                </TouchableOpacity>
+              </React.Fragment>
+            );
+          })}
+        </ScrollView>
+      )}
+
       {/* Content */}
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -317,7 +433,7 @@ export default function ParkContentScreen() {
           </View>
         ) : (
           <>
-            {getCurrentTabData().length === 0 ? (
+            {filteredData.length === 0 ? (
               <View style={styles.emptyContainer}>
                 <IconSymbol
                   ios_icon_name="exclamationmark.circle"
@@ -330,7 +446,7 @@ export default function ParkContentScreen() {
                 </Text>
               </View>
             ) : (
-              getCurrentTabData().map(item => renderItem(item))
+              filteredData.map(item => renderItem(item))
             )}
           </>
         )}
@@ -398,6 +514,32 @@ const styles = StyleSheet.create({
   tabTextActive: {
     color: '#FFFFFF',
   },
+  filtersContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    gap: 8,
+  },
+  filterChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    backgroundColor: colors.card,
+    gap: 6,
+  },
+  filterChipActive: {
+    backgroundColor: colors.accent,
+  },
+  filterChipText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.text,
+    fontFamily: 'Poppins_600SemiBold',
+  },
+  filterChipTextActive: {
+    color: colors.textDark,
+  },
   scrollContent: {
     padding: 16,
   },
@@ -464,8 +606,33 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: colors.text,
-    marginBottom: 4,
+    marginBottom: 6,
     fontFamily: 'Poppins_700Bold',
+  },
+  itemSummary: {
+    fontSize: 13,
+    color: '#999',
+    marginBottom: 8,
+    lineHeight: 18,
+    fontFamily: 'Poppins_400Regular',
+  },
+  stylesContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+    marginBottom: 6,
+  },
+  styleBadge: {
+    backgroundColor: 'rgba(106, 0, 245, 0.15)',
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+  },
+  styleBadgeText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.primary,
+    fontFamily: 'Poppins_600SemiBold',
   },
   itemStatus: {
     fontSize: 12,
