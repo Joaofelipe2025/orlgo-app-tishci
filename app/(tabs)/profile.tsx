@@ -91,7 +91,7 @@ export default function ProfileScreen() {
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <View style={styles.unauthContainer}>
             <LinearGradient
-              colors={[OrlGoColors.gradientStart, OrlGoColors.gradientEnd]}
+              colors={[OrlGoColors.primary, OrlGoColors.primaryLight]}
               style={styles.logoContainer}
             >
               <Text style={styles.logo}>OrlGo</Text>
@@ -123,7 +123,7 @@ export default function ProfileScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
           <LinearGradient
-            colors={[OrlGoColors.gradientStart, OrlGoColors.gradientEnd]}
+            colors={[OrlGoColors.primary, OrlGoColors.primaryLight]}
             style={styles.avatarContainer}
           >
             <Text style={styles.avatarText}>
@@ -151,7 +151,7 @@ export default function ProfileScreen() {
               ios_icon_name="chevron.right"
               android_material_icon_name="chevron-right"
               size={20}
-              color={colors.textGray}
+              color={colors.textSecondary}
             />
           </TouchableOpacity>
 
@@ -169,7 +169,7 @@ export default function ProfileScreen() {
               ios_icon_name="chevron.right"
               android_material_icon_name="chevron-right"
               size={20}
-              color={colors.textGray}
+              color={colors.textSecondary}
             />
           </TouchableOpacity>
         </View>
@@ -194,7 +194,7 @@ export default function ProfileScreen() {
               ios_icon_name="chevron.right"
               android_material_icon_name="chevron-right"
               size={20}
-              color={colors.textGray}
+              color={colors.textSecondary}
             />
           </TouchableOpacity>
 
@@ -215,7 +215,7 @@ export default function ProfileScreen() {
               ios_icon_name="chevron.right"
               android_material_icon_name="chevron-right"
               size={20}
-              color={colors.textGray}
+              color={colors.textSecondary}
             />
           </TouchableOpacity>
         </View>
@@ -292,11 +292,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.md,
-    ...shadows.glowPurple,
+    ...shadows.glowPrimary,
   },
   avatarText: {
     ...typography.h1,
-    color: colors.textLight,
+    color: colors.textOnDark,
     fontSize: 40,
   },
   name: {
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
   },
   email: {
     ...typography.body,
-    color: colors.textGray,
+    color: colors.textSecondary,
   },
   section: {
     paddingHorizontal: spacing.lg,
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...typography.bodySmall,
-    color: colors.textGray,
+    color: colors.textSecondary,
     fontWeight: '600',
     marginBottom: spacing.sm,
     textTransform: 'uppercase',
@@ -353,11 +353,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.lg,
-    ...shadows.glowPurple,
+    ...shadows.glowPrimary,
   },
   logo: {
     ...typography.h1,
-    color: colors.textLight,
+    color: colors.textOnDark,
     fontSize: 36,
   },
   unauthTitle: {
@@ -368,13 +368,13 @@ const styles = StyleSheet.create({
   },
   unauthSubtitle: {
     ...typography.body,
-    color: colors.textGray,
+    color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: spacing.xl,
     lineHeight: 24,
   },
   loginButton: {
-    backgroundColor: colors.neonGreen,
+    backgroundColor: colors.accent,
     borderRadius: borderRadius.md,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.xl,
@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
   },
   loginButtonText: {
     ...typography.button,
-    color: colors.text,
+    color: colors.textOnDark,
   },
   signupButton: {
     backgroundColor: 'transparent',
@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     ...typography.caption,
-    color: colors.textGray,
+    color: colors.textSecondary,
     textAlign: 'center',
   },
 });

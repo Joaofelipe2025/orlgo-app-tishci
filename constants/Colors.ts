@@ -1,54 +1,51 @@
 
 /**
- * OrlGo Brand Colors
- * Purple-themed color palette for the Orlando theme park guide app
+ * Orlando-Inspired Modern & Premium Color Palette
+ * Blue-themed color palette for the Orlando theme park guide app
  */
 
 export const OrlGoColors = {
-  // Primary Brand Colors
-  primary: '#6A00F5',           // Primary Purple
-  primaryDark: '#5500C7',       // Darker Purple
-  primaryLight: '#8A33FF',      // Lighter Purple
+  // Core Colors
+  primary: '#0B4D9C',              // Primary Blue - buttons, CTAs, active states, links
+  primaryDark: '#083A75',          // Darker Blue
+  primaryLight: '#1565C0',         // Lighter Blue
   
-  // Accent Colors
-  neonGreen: '#C6FF00',         // Neon Green (CTAs, highlights)
-  neonGreenDark: '#A8D900',     // Darker Neon Green
+  secondary: '#081F3D',            // Secondary Dark Blue - headers, tab bars, navigation
+  secondaryLight: '#0E2A47',       // Lighter Secondary
   
-  // Gradients
-  gradientStart: '#6A00F5',     // Purple gradient start
-  gradientEnd: '#9A00FF',       // Purple gradient end
-  gradientGreen: '#C6FF00',     // Green gradient accent
+  // Backgrounds
+  backgroundPrimary: '#F5F7FA',    // Main app background (light)
+  backgroundSecondary: '#0E2A47',  // Sections, cards on dark mode, hero backgrounds
   
-  // Wait Time Colors (Queue Status)
-  queueGreen: '#C6FF00',        // 0-30 min (short wait)
-  queueYellow: '#FFC300',       // 31-60 min (medium wait)
-  queueRed: '#FF3C38',          // 61+ min (long wait)
-  queueGray: '#8E8E93',         // Closed/Unknown
+  // Accent & Energy
+  accent: '#FF8A3D',               // Orange accent - icons, badges, progress, important actions
+  accentDark: '#E67429',           // Darker accent
+  accentLight: '#FFA366',          // Lighter accent
+  
+  // Neutral Scale
+  textPrimary: '#0A0A0A',          // Primary text color
+  textSecondary: '#6B7280',        // Secondary text color
+  textOnDark: '#FFFFFF',           // Text on dark backgrounds
+  textMuted: '#9CA3AF',            // Muted text
+  
+  borderColor: '#E5E7EB',          // Border color
+  dividerColor: '#E2E8F0',         // Divider color
+  
+  // Wait Time Colors (Queue Status) - keeping functional colors
+  queueGreen: '#10B981',           // 0-30 min (short wait)
+  queueYellow: '#F59E0B',          // 31-60 min (medium wait)
+  queueRed: '#EF4444',             // 61+ min (long wait)
+  queueGray: '#6B7280',            // Closed/Unknown
   
   // Semantic Colors
-  success: '#34C759',
-  warning: '#FF9500',
-  error: '#FF3B30',
-  info: '#007AFF',
-  
-  // Text Colors (Light Mode)
-  textLight: '#FFFFFF',
-  textDark: '#1A1A1A',
-  textGray: '#8E8E93',
-  textMuted: '#C7C7CC',
-  
-  // Background Colors (Light Mode)
-  backgroundLight: '#FFFFFF',
-  backgroundGray: '#F2F2F7',
-  backgroundDark: '#1C1C1E',
+  success: '#10B981',
+  warning: '#F59E0B',
+  error: '#EF4444',
+  info: '#0B4D9C',
   
   // Card & Surface Colors
   cardLight: '#FFFFFF',
-  cardDark: '#2C2C2E',
-  
-  // Border Colors
-  border: '#E5E5EA',
-  borderDark: '#38383A',
+  cardDark: '#1F2937',
   
   // Shadow Colors
   shadow: 'rgba(0, 0, 0, 0.1)',
@@ -64,36 +61,36 @@ export const OrlGoColors = {
  */
 export const Colors = {
   light: {
-    text: OrlGoColors.textDark,
-    textSecondary: OrlGoColors.textGray,
+    text: OrlGoColors.textPrimary,
+    textSecondary: OrlGoColors.textSecondary,
     textMuted: OrlGoColors.textMuted,
-    background: OrlGoColors.backgroundLight,
-    backgroundSecondary: OrlGoColors.backgroundGray,
+    background: OrlGoColors.backgroundPrimary,
+    backgroundSecondary: '#FFFFFF',
     card: OrlGoColors.cardLight,
-    border: OrlGoColors.border,
+    border: OrlGoColors.borderColor,
     primary: OrlGoColors.primary,
-    accent: OrlGoColors.neonGreen,
+    accent: OrlGoColors.accent,
     shadow: OrlGoColors.shadow,
     overlay: OrlGoColors.overlay,
     tint: OrlGoColors.primary,
-    tabIconDefault: OrlGoColors.textGray,
+    tabIconDefault: OrlGoColors.textSecondary,
     tabIconSelected: OrlGoColors.primary,
   },
   dark: {
-    text: OrlGoColors.textLight,
-    textSecondary: OrlGoColors.textGray,
+    text: OrlGoColors.textOnDark,
+    textSecondary: OrlGoColors.textSecondary,
     textMuted: OrlGoColors.textMuted,
-    background: OrlGoColors.backgroundDark,
-    backgroundSecondary: '#000000',
+    background: '#111827',
+    backgroundSecondary: OrlGoColors.backgroundSecondary,
     card: OrlGoColors.cardDark,
-    border: OrlGoColors.borderDark,
+    border: '#374151',
     primary: OrlGoColors.primary,
-    accent: OrlGoColors.neonGreen,
+    accent: OrlGoColors.accent,
     shadow: OrlGoColors.shadowDark,
     overlay: OrlGoColors.overlay,
     tint: OrlGoColors.primaryLight,
-    tabIconDefault: OrlGoColors.textGray,
-    tabIconSelected: OrlGoColors.neonGreen,
+    tabIconDefault: OrlGoColors.textSecondary,
+    tabIconSelected: OrlGoColors.accent,
   },
 };
 
@@ -145,3 +142,18 @@ export function getQueueStatus(waitTime: number | null): 'short' | 'medium' | 'l
     return 'long';
   }
 }
+
+// Legacy export for backwards compatibility
+export const appleBlue = OrlGoColors.primary;
+export const zincColors = {
+  50: '#FAFAFA',
+  100: '#F4F4F5',
+  200: '#E4E4E7',
+  300: '#D4D4D8',
+  400: '#A1A1AA',
+  500: '#71717A',
+  600: '#52525B',
+  700: '#3F3F46',
+  800: '#27272A',
+  900: '#18181B',
+};

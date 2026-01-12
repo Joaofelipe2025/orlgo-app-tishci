@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { IconSymbol } from '@/components/IconSymbol';
+import { colors } from '@/styles/commonStyles';
 import {
   marketHighlights,
   restaurantsOffers,
@@ -100,7 +101,7 @@ export default function MarketplaceHome() {
               ios_icon_name="star.fill"
               android_material_icon_name="star"
               size={16}
-              color="#FFC300"
+              color={colors.accent}
             />
             <Text style={styles.ratingText}>{store.rating}</Text>
           </View>
@@ -134,7 +135,7 @@ export default function MarketplaceHome() {
               ios_icon_name="star.fill"
               android_material_icon_name="star"
               size={14}
-              color="#FFC300"
+              color={colors.accent}
             />
             <Text style={styles.couponRatingText}>{store.rating}</Text>
           </View>
@@ -185,12 +186,12 @@ export default function MarketplaceHome() {
               ios_icon_name="magnifyingglass"
               android_material_icon_name="search"
               size={20}
-              color="#6D6D6D"
+              color={colors.textSecondary}
             />
             <TextInput
               style={styles.searchInput}
               placeholder="Buscar cupons, lojas ou restaurantes..."
-              placeholderTextColor="#6D6D6D"
+              placeholderTextColor={colors.textSecondary}
               value={searchQuery}
               onChangeText={setSearchQuery}
             />
@@ -200,7 +201,7 @@ export default function MarketplaceHome() {
               ios_icon_name="line.3.horizontal.decrease.circle"
               android_material_icon_name="filter_list"
               size={24}
-              color="#9A4DFF"
+              color={colors.primary}
             />
           </TouchableOpacity>
         </View>
@@ -254,10 +255,10 @@ export default function MarketplaceHome() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: '#9A4DFF',
+    backgroundColor: colors.secondary,
     paddingTop: Platform.OS === 'android' ? 48 : 60,
     paddingBottom: 20,
     paddingHorizontal: 20,
@@ -266,7 +267,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.textOnDark,
   },
   scrollView: {
     flex: 1,
@@ -285,24 +286,28 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
     gap: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   searchInput: {
     flex: 1,
     fontSize: 16,
-    color: '#1E1E1E',
+    color: colors.text,
   },
   filterButton: {
     width: 48,
     height: 48,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   categoryContainer: {
     marginBottom: 8,
@@ -314,14 +319,17 @@ const styles = StyleSheet.create({
   categoryChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 20,
     gap: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   categoryChipActive: {
-    backgroundColor: '#9A4DFF',
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   categoryIcon: {
     fontSize: 18,
@@ -329,10 +337,10 @@ const styles = StyleSheet.create({
   categoryText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#1E1E1E',
+    color: colors.text,
   },
   categoryTextActive: {
-    color: '#FFFFFF',
+    color: colors.textOnDark,
   },
   section: {
     marginTop: 24,
@@ -340,7 +348,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#1E1E1E',
+    color: colors.text,
     marginBottom: 16,
     paddingHorizontal: 20,
   },
@@ -362,19 +370,19 @@ const styles = StyleSheet.create({
   featuredImage: {
     width: '100%',
     height: 200,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.backgroundSecondary,
   },
   discountBadge: {
     position: 'absolute',
     top: 16,
     right: 16,
-    backgroundColor: '#FF3C38',
+    backgroundColor: colors.accent,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
   },
   discountBadgeText: {
-    color: '#FFFFFF',
+    color: colors.textOnDark,
     fontSize: 12,
     fontWeight: '700',
   },
@@ -384,12 +392,12 @@ const styles = StyleSheet.create({
   featuredCardTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#1E1E1E',
+    color: colors.text,
     marginBottom: 6,
   },
   featuredCardDescription: {
     fontSize: 14,
-    color: '#6D6D6D',
+    color: colors.textSecondary,
     lineHeight: 20,
     marginBottom: 12,
   },
@@ -406,11 +414,11 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#1E1E1E',
+    color: colors.text,
   },
   distanceText: {
     fontSize: 14,
-    color: '#6D6D6D',
+    color: colors.textSecondary,
   },
   couponGrid: {
     paddingHorizontal: 20,
@@ -431,13 +439,13 @@ const styles = StyleSheet.create({
   couponImage: {
     width: 120,
     height: 120,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.backgroundSecondary,
   },
   couponDiscountBadge: {
     position: 'absolute',
     top: 8,
     left: 8,
-    backgroundColor: '#FF3C38',
+    backgroundColor: colors.accent,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
@@ -450,12 +458,12 @@ const styles = StyleSheet.create({
   couponCardTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#1E1E1E',
+    color: colors.text,
     marginBottom: 4,
   },
   couponCardDescription: {
     fontSize: 12,
-    color: '#6D6D6D',
+    color: colors.textSecondary,
     lineHeight: 16,
     marginBottom: 8,
   },
@@ -467,11 +475,11 @@ const styles = StyleSheet.create({
   couponRatingText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#1E1E1E',
+    color: colors.text,
   },
   couponDistanceText: {
     fontSize: 12,
-    color: '#6D6D6D',
+    color: colors.textSecondary,
   },
   serviceCard: {
     flexDirection: 'row',
@@ -489,7 +497,7 @@ const styles = StyleSheet.create({
   serviceImage: {
     width: 120,
     height: 140,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.backgroundSecondary,
   },
   serviceCardContent: {
     flex: 1,
@@ -499,12 +507,12 @@ const styles = StyleSheet.create({
   serviceCardTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#1E1E1E',
+    color: colors.text,
     marginBottom: 6,
   },
   serviceCardDescription: {
     fontSize: 13,
-    color: '#6D6D6D',
+    color: colors.textSecondary,
     lineHeight: 18,
     marginBottom: 12,
   },
@@ -512,13 +520,13 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   serviceButton: {
-    backgroundColor: '#9A4DFF',
+    backgroundColor: colors.primary,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 10,
   },
   serviceButtonText: {
-    color: '#FFFFFF',
+    color: colors.textOnDark,
     fontSize: 14,
     fontWeight: '600',
   },

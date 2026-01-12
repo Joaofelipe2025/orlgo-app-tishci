@@ -86,7 +86,7 @@ export default function LoginScreen() {
       >
         <View style={styles.header}>
           <LinearGradient
-            colors={[OrlGoColors.gradientStart, OrlGoColors.gradientEnd]}
+            colors={[OrlGoColors.primary, OrlGoColors.primaryLight]}
             style={styles.logoContainer}
           >
             <Text style={styles.logo}>OrlGo</Text>
@@ -148,7 +148,7 @@ export default function LoginScreen() {
             disabled={loading}
           >
             {loading ? (
-              <ActivityIndicator color={colors.text} />
+              <ActivityIndicator color={colors.textOnDark} />
             ) : (
               <Text style={styles.loginButtonText}>Entrar</Text>
             )}
@@ -215,11 +215,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.md,
-    ...shadows.glowPurple,
+    ...shadows.glowPrimary,
   },
   logo: {
     ...typography.h1,
-    color: colors.textLight,
+    color: colors.textOnDark,
     fontSize: 28,
   },
   title: {
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     ...typography.body,
-    color: colors.textGray,
+    color: colors.textSecondary,
     textAlign: 'center',
   },
   form: {
@@ -240,12 +240,12 @@ const styles = StyleSheet.create({
   },
   label: {
     ...typography.bodySmall,
-    color: colors.textGray,
+    color: colors.textSecondary,
     marginBottom: spacing.xs,
     fontWeight: '600',
   },
   input: {
-    backgroundColor: colors.backgroundGray,
+    backgroundColor: '#FFFFFF',
     borderRadius: borderRadius.md,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.md,
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   loginButton: {
-    backgroundColor: colors.neonGreen,
+    backgroundColor: colors.accent,
     borderRadius: borderRadius.md,
     paddingVertical: spacing.md,
     alignItems: 'center',
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
   },
   loginButtonText: {
     ...typography.button,
-    color: colors.text,
+    color: colors.textOnDark,
   },
   divider: {
     flexDirection: 'row',
@@ -295,11 +295,11 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: colors.border,
+    backgroundColor: colors.divider,
   },
   dividerText: {
     ...typography.bodySmall,
-    color: colors.textGray,
+    color: colors.textSecondary,
     marginHorizontal: spacing.md,
   },
   signupButton: {
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
   },
   signupButtonText: {
     ...typography.body,
-    color: colors.textGray,
+    color: colors.textSecondary,
   },
   signupButtonTextBold: {
     color: colors.primary,
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     ...typography.caption,
-    color: colors.textGray,
+    color: colors.textSecondary,
     textAlign: 'center',
     lineHeight: 18,
   },

@@ -30,7 +30,7 @@ export default function BrandsScreen() {
     <View style={styles.container}>
       {/* Compact Header with white text */}
       <LinearGradient
-        colors={['#6A00F5', '#9A00FF']}
+        colors={[colors.secondary, colors.primary]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.header}
@@ -93,7 +93,7 @@ export default function BrandsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.background,
   },
   header: {
     paddingTop: Platform.OS === 'android' ? 48 : 60,
@@ -104,13 +104,13 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.textOnDark,
     marginBottom: 4,
     fontFamily: 'Poppins_700Bold',
   },
   headerSubtitle: {
     fontSize: 13,
-    color: '#FFFFFF',
+    color: colors.textOnDark,
     opacity: 0.9,
     fontFamily: 'Poppins_400Regular',
   },
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 20,
     overflow: 'hidden',
-    shadowColor: '#6A00F5',
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 12,
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
   brandName: {
     fontSize: 32,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.textOnDark,
     marginBottom: 8,
     fontFamily: 'Poppins_700Bold',
   },
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   },
   parksCountText: {
     fontSize: 14,
-    color: '#FFFFFF',
+    color: colors.textOnDark,
     fontFamily: 'Poppins_600SemiBold',
   },
 });

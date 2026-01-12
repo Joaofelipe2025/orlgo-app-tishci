@@ -52,10 +52,10 @@ export default function ItineraryScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.dark ? colors.background : '#FFFFFF' }]}>
+    <View style={[styles.container, { backgroundColor: theme.dark ? colors.background : colors.background }]}>
       {/* Compact Header */}
       <LinearGradient
-        colors={['#6A00F5', '#9A00FF']}
+        colors={[colors.secondary, colors.primary]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.header}
@@ -75,7 +75,7 @@ export default function ItineraryScreen() {
               ios_icon_name="calendar"
               android_material_icon_name="event"
               size={80}
-              color="#999"
+              color={colors.textSecondary}
             />
             <Text style={[styles.emptyTitle, { fontFamily: 'Poppins_700Bold' }]}>
               Seu roteiro está vazio
@@ -88,7 +88,7 @@ export default function ItineraryScreen() {
               onPress={handleCreateItinerary}
             >
               <LinearGradient
-                colors={['#6A00F5', '#9A00FF']}
+                colors={[colors.secondary, colors.primary]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.createButton}
@@ -97,7 +97,7 @@ export default function ItineraryScreen() {
                   ios_icon_name="plus"
                   android_material_icon_name="add"
                   size={20}
-                  color="#FFFFFF"
+                  color={colors.textOnDark}
                 />
                 <Text style={[styles.createButtonText, { fontFamily: 'Poppins_600SemiBold' }]}>
                   Ver Parques
@@ -119,13 +119,13 @@ export default function ItineraryScreen() {
                   activeOpacity={0.8}
                   onPress={() => handleItemPress(item)}
                 >
-                  <View style={[styles.itemCard, { backgroundColor: theme.dark ? colors.card : '#F5F5F5' }]}>
+                  <View style={[styles.itemCard, { backgroundColor: theme.dark ? colors.card : '#FFFFFF' }]}>
                     <View style={styles.itemHeader}>
                       <View style={styles.itemInfo}>
-                        <Text style={[styles.itemName, { fontFamily: 'Poppins_700Bold', color: theme.dark ? colors.text : colors.textDark }]}>
+                        <Text style={[styles.itemName, { fontFamily: 'Poppins_700Bold', color: theme.dark ? colors.textOnDark : colors.text }]}>
                           {item.attractionName}
                         </Text>
-                        <Text style={[styles.parkName, { fontFamily: 'Poppins_400Regular', color: theme.dark ? '#999' : '#666' }]}>
+                        <Text style={[styles.parkName, { fontFamily: 'Poppins_400Regular', color: colors.textSecondary }]}>
                           {item.parkName}
                         </Text>
                       </View>
@@ -136,7 +136,7 @@ export default function ItineraryScreen() {
                             ios_icon_name="clock.fill"
                             android_material_icon_name="schedule"
                             size={14}
-                            color={colors.textDark}
+                            color={colors.textOnDark}
                           />
                           <Text style={[styles.waitTimeText, { fontFamily: 'Poppins_700Bold' }]}>
                             {item.waitTime} min
@@ -153,7 +153,7 @@ export default function ItineraryScreen() {
                         ios_icon_name="trash"
                         android_material_icon_name="delete"
                         size={18}
-                        color={colors.queueRed}
+                        color={colors.error}
                       />
                       <Text style={[styles.removeButtonText, { fontFamily: 'Poppins_600SemiBold' }]}>
                         Remover
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.textOnDark,
   },
   scrollContent: {
     padding: 16,
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   },
   emptySubtitle: {
     fontSize: 14,
-    color: '#999',
+    color: colors.textSecondary,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: 32,
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     borderRadius: 12,
     gap: 10,
-    shadowColor: '#6A00F5',
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 12,
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
   createButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.textOnDark,
   },
   sectionHeader: {
     marginBottom: 16,
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
   waitTimeText: {
     fontSize: 13,
     fontWeight: '700',
-    color: colors.textDark,
+    color: colors.textOnDark,
   },
   removeButton: {
     flexDirection: 'row',
@@ -303,13 +303,13 @@ const styles = StyleSheet.create({
   removeButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.queueRed,
+    color: colors.error,
   },
   addMoreButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(106, 0, 245, 0.1)',
+    backgroundColor: 'rgba(11, 77, 156, 0.1)',
     paddingVertical: 16,
     borderRadius: 12,
     gap: 10,

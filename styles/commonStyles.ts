@@ -3,27 +3,59 @@ import { StyleSheet } from 'react-native';
 import { OrlGoColors } from '@/constants/Colors';
 
 export const colors = {
+  // Core Colors
   primary: OrlGoColors.primary,
   primaryDark: OrlGoColors.primaryDark,
   primaryLight: OrlGoColors.primaryLight,
-  neonGreen: OrlGoColors.neonGreen,
-  neonGreenDark: OrlGoColors.neonGreenDark,
-  text: OrlGoColors.textDark,
-  textLight: OrlGoColors.textLight,
-  textGray: OrlGoColors.textGray,
+  secondary: OrlGoColors.secondary,
+  secondaryLight: OrlGoColors.secondaryLight,
+  
+  // Accent
+  accent: OrlGoColors.accent,
+  accentDark: OrlGoColors.accentDark,
+  accentLight: OrlGoColors.accentLight,
+  
+  // Text Colors
+  text: OrlGoColors.textPrimary,
+  textSecondary: OrlGoColors.textSecondary,
+  textOnDark: OrlGoColors.textOnDark,
   textMuted: OrlGoColors.textMuted,
-  background: OrlGoColors.backgroundLight,
-  backgroundGray: OrlGoColors.backgroundGray,
-  backgroundDark: OrlGoColors.backgroundDark,
+  
+  // Backgrounds
+  background: OrlGoColors.backgroundPrimary,
+  backgroundSecondary: OrlGoColors.backgroundSecondary,
+  
+  // Card & Surface
   card: OrlGoColors.cardLight,
-  border: OrlGoColors.border,
-  shadow: OrlGoColors.shadow,
+  cardDark: OrlGoColors.cardDark,
+  
+  // Borders & Dividers
+  border: OrlGoColors.borderColor,
+  divider: OrlGoColors.dividerColor,
+  
+  // Semantic Colors
   success: OrlGoColors.success,
   warning: OrlGoColors.warning,
   error: OrlGoColors.error,
+  info: OrlGoColors.info,
+  
+  // Queue Colors
   queueGreen: OrlGoColors.queueGreen,
   queueYellow: OrlGoColors.queueYellow,
   queueRed: OrlGoColors.queueRed,
+  queueGray: OrlGoColors.queueGray,
+  
+  // Shadow
+  shadow: OrlGoColors.shadow,
+  shadowDark: OrlGoColors.shadowDark,
+  
+  // Legacy aliases (for backwards compatibility)
+  neonGreen: OrlGoColors.accent,
+  neonGreenDark: OrlGoColors.accentDark,
+  textLight: OrlGoColors.textOnDark,
+  textGray: OrlGoColors.textSecondary,
+  backgroundGray: '#F9FAFB',
+  backgroundDark: OrlGoColors.backgroundSecondary,
 };
 
 export const typography = {
@@ -117,16 +149,24 @@ export const shadows = {
     elevation: 8,
   },
   glow: {
-    shadowColor: OrlGoColors.neonGreen,
+    shadowColor: OrlGoColors.accent,
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
+    shadowOpacity: 0.4,
     shadowRadius: 12,
     elevation: 8,
   },
+  glowPrimary: {
+    shadowColor: OrlGoColors.primary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  // Legacy alias
   glowPurple: {
     shadowColor: OrlGoColors.primary,
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
+    shadowOpacity: 0.3,
     shadowRadius: 12,
     elevation: 8,
   },
@@ -188,7 +228,7 @@ export const commonStyles = StyleSheet.create({
     fontWeight: '400',
   },
   primaryButton: {
-    backgroundColor: colors.neonGreen,
+    backgroundColor: colors.accent,
     borderRadius: borderRadius.md,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
@@ -198,7 +238,7 @@ export const commonStyles = StyleSheet.create({
   },
   primaryButtonText: {
     ...typography.button,
-    color: colors.text,
+    color: colors.textOnDark,
   },
   secondaryButton: {
     backgroundColor: 'transparent',
@@ -215,7 +255,7 @@ export const commonStyles = StyleSheet.create({
     color: colors.primary,
   },
   input: {
-    backgroundColor: colors.backgroundGray,
+    backgroundColor: '#FFFFFF',
     borderRadius: borderRadius.md,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.md,
@@ -239,13 +279,13 @@ export const commonStyles = StyleSheet.create({
   },
   label: {
     ...typography.bodySmall,
-    color: colors.textGray,
+    color: colors.textSecondary,
     marginBottom: spacing.xs,
     fontWeight: '600',
   },
   divider: {
     height: 1,
-    backgroundColor: colors.border,
+    backgroundColor: colors.divider,
     marginVertical: spacing.md,
   },
   badge: {
