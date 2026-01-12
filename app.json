@@ -1,7 +1,8 @@
+
 {
   "expo": {
-    "name": "Orlando Theme Parks",
-    "slug": "Orlando Theme Parks",
+    "name": "OrlGo",
+    "slug": "orlgo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/natively-dark.png",
@@ -10,11 +11,11 @@
     "splash": {
       "image": "./assets/images/natively-dark.png",
       "resizeMode": "contain",
-      "backgroundColor": "#000000"
+      "backgroundColor": "#6A00F5"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.Natively",
+      "bundleIdentifier": "com.orlgo.app",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -22,10 +23,10 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/natively-dark.png",
-        "backgroundColor": "#000000"
+        "backgroundColor": "#6A00F5"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.Natively"
+      "package": "com.orlgo.app"
     },
     "web": {
       "favicon": "./assets/images/final_quest_240x240.png",
@@ -34,15 +35,15 @@
     "plugins": [
       "expo-font",
       "expo-router",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-secure-store"
     ],
-    "scheme": "natively",
+    "scheme": "orlgo",
     "experiments": {
       "typedRoutes": true
     },
     "extra": {
       "router": {}
     }
-  },
-  "scheme": "Orlando Theme Parks"
+  }
 }

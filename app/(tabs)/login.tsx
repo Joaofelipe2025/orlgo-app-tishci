@@ -3,59 +3,76 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   TextInput,
   TouchableOpacity,
+  StyleSheet,
+  ScrollView,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
+  Alert,
   ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { IconSymbol } from '@/components/IconSymbol';
-import { colors } from '@/styles/commonStyles';
-import { useUser } from '@/contexts/UserContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { colors, typography, spacing, borderRadius, shadows } from '@/styles/commonStyles';
+import { OrlGoColors } from '@/constants/Colors';
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { login } = useUser();
+  const { signIn } = useAuth();
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+
+  const validateForm = () => {
+    const newErrors: { email?: string; password?: string } = {};
+    
+    if (!email.trim()) {
+      newErrors.email = 'Email é obrigatório';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = 'Email inválido';
+    }
+    
+    if (!password) {
+      newErrors.password = 'Senha é obrigatória';
+    } else if (password.length < 6) {
+      newErrors.password = 'Senha deve ter pelo menos 6 caracteres';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      setError('Por favor, preencha todos os campos');
+    if (!validateForm()) {
       return;
     }
 
-    setLoading(true);
-    setError('');
-
     try {
-      const success = await login(email, password);
-      if (success) {
-        router.back();
-      } else {
-        setError('Email ou senha incorretos');
-      }
-    } catch (err) {
-      setError('Erro ao fazer login. Tente novamente.');
-      console.error('Login error:', err);
+      setLoading(true);
+      await signIn(email.trim(), password);
+      router.replace('/(tabs)/(home)/');
+    } catch (error: any) {
+      console.error('Login error:', error);
+      Alert.alert(
+        'Erro ao entrar',
+        error.message || 'Email ou senha incorretos. Tente novamente.',
+        [{ text: 'OK' }]
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCreateAccount = () => {
-    console.log('Navigate to create account');
-    // In production, navigate to sign up screen
+  const handleForgotPassword = () => {
+    router.push('/(tabs)/forgot-password');
   };
 
-  const handleBack = () => {
-    router.back();
+  const handleSignUp = () => {
+    router.push('/(tabs)/signup');
   };
 
   return (
@@ -63,123 +80,79 @@ export default function LoginScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <LinearGradient
-        colors={['#6A00F5', '#9A00FF']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.header}
-      >
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <IconSymbol
-            ios_icon_name="chevron.left"
-            android_material_icon_name="arrow-back"
-            size={28}
-            color="#FFFFFF"
-          />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Entrar</Text>
-        <View style={styles.headerPlaceholder} />
-      </LinearGradient>
-
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.content}>
-          <View style={styles.logoContainer}>
-            <IconSymbol
-              ios_icon_name="person.circle.fill"
-              android_material_icon_name="account-circle"
-              size={80}
-              color={colors.primary}
+        <View style={styles.header}>
+          <LinearGradient
+            colors={[OrlGoColors.gradientStart, OrlGoColors.gradientEnd]}
+            style={styles.logoContainer}
+          >
+            <Text style={styles.logo}>OrlGo</Text>
+          </LinearGradient>
+          <Text style={styles.title}>Bem-vindo de volta!</Text>
+          <Text style={styles.subtitle}>Entre para continuar sua aventura</Text>
+        </View>
+
+        <View style={styles.form}>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              style={[styles.input, errors.email && styles.inputError]}
+              placeholder="seu@email.com"
+              placeholderTextColor={colors.textMuted}
+              value={email}
+              onChangeText={(text) => {
+                setEmail(text);
+                if (errors.email) setErrors({ ...errors, email: undefined });
+              }}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              editable={!loading}
             />
-            <Text style={styles.welcomeText}>Bem-vindo de volta!</Text>
-            <Text style={styles.subtitleText}>Entre para continuar sua aventura</Text>
+            {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
           </View>
 
-          <View style={styles.form}>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Email</Text>
-              <View style={styles.inputWrapper}>
-                <IconSymbol
-                  ios_icon_name="envelope.fill"
-                  android_material_icon_name="email"
-                  size={20}
-                  color="#999"
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="seu@email.com"
-                  placeholderTextColor="#999"
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-              </View>
-            </View>
-
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Senha</Text>
-              <View style={styles.inputWrapper}>
-                <IconSymbol
-                  ios_icon_name="lock.fill"
-                  android_material_icon_name="lock"
-                  size={20}
-                  color="#999"
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="••••••••"
-                  placeholderTextColor="#999"
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-              </View>
-            </View>
-
-            {error ? (
-              <View style={styles.errorContainer}>
-                <IconSymbol
-                  ios_icon_name="exclamationmark.triangle.fill"
-                  android_material_icon_name="error"
-                  size={20}
-                  color={colors.queueRed}
-                />
-                <Text style={styles.errorText}>{error}</Text>
-              </View>
-            ) : null}
-
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={handleLogin}
-              disabled={loading}
-            >
-              <LinearGradient
-                colors={['#6A00F5', '#9A00FF']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.loginButton}
-              >
-                {loading ? (
-                  <ActivityIndicator color="#FFFFFF" />
-                ) : (
-                  <Text style={styles.loginButtonText}>Entrar</Text>
-                )}
-              </LinearGradient>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.forgotPassword}
-              onPress={() => console.log('Forgot password')}
-            >
-              <Text style={styles.forgotPasswordText}>Esqueceu sua senha?</Text>
-            </TouchableOpacity>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Senha</Text>
+            <TextInput
+              style={[styles.input, errors.password && styles.inputError]}
+              placeholder="••••••••"
+              placeholderTextColor={colors.textMuted}
+              value={password}
+              onChangeText={(text) => {
+                setPassword(text);
+                if (errors.password) setErrors({ ...errors, password: undefined });
+              }}
+              secureTextEntry
+              autoCapitalize="none"
+              autoCorrect={false}
+              editable={!loading}
+            />
+            {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
           </View>
+
+          <TouchableOpacity
+            onPress={handleForgotPassword}
+            disabled={loading}
+            style={styles.forgotPasswordButton}
+          >
+            <Text style={styles.forgotPasswordText}>Esqueceu a senha?</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.loginButton, loading && styles.loginButtonDisabled]}
+            onPress={handleLogin}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color={colors.text} />
+            ) : (
+              <Text style={styles.loginButtonText}>Entrar</Text>
+            )}
+          </TouchableOpacity>
 
           <View style={styles.divider}>
             <View style={styles.dividerLine} />
@@ -188,12 +161,33 @@ export default function LoginScreen() {
           </View>
 
           <TouchableOpacity
-            style={styles.createAccountButton}
-            onPress={handleCreateAccount}
-            activeOpacity={0.8}
+            style={styles.signupButton}
+            onPress={handleSignUp}
+            disabled={loading}
           >
-            <Text style={styles.createAccountText}>Criar nova conta</Text>
+            <Text style={styles.signupButtonText}>
+              Não tem conta? <Text style={styles.signupButtonTextBold}>Cadastre-se</Text>
+            </Text>
           </TouchableOpacity>
+        </View>
+
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>
+            Ao continuar, você concorda com nossos{' '}
+            <Text
+              style={styles.footerLink}
+              onPress={() => router.push('/(tabs)/terms')}
+            >
+              Termos de Serviço
+            </Text>{' '}
+            e{' '}
+            <Text
+              style={styles.footerLink}
+              onPress={() => router.push('/(tabs)/privacy')}
+            >
+              Política de Privacidade
+            </Text>
+          </Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -205,149 +199,133 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  header: {
-    paddingTop: Platform.OS === 'android' ? 48 : 60,
-    paddingBottom: 16,
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    fontFamily: 'Poppins_700Bold',
-  },
-  headerPlaceholder: {
-    width: 40,
-  },
   scrollContent: {
     flexGrow: 1,
+    padding: spacing.lg,
+    paddingTop: Platform.OS === 'android' ? 48 : spacing.xl,
   },
-  content: {
-    flex: 1,
-    padding: 24,
+  header: {
+    alignItems: 'center',
+    marginBottom: spacing.xl,
   },
   logoContainer: {
-    alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 40,
-  },
-  welcomeText: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: colors.text,
-    marginTop: 16,
-    marginBottom: 8,
-    fontFamily: 'Poppins_700Bold',
-  },
-  subtitleText: {
-    fontSize: 16,
-    color: '#999',
-    fontFamily: 'Poppins_400Regular',
-  },
-  form: {
-    marginBottom: 32,
-  },
-  inputContainer: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: 8,
-    fontFamily: 'Poppins_600SemiBold',
-  },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    gap: 12,
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
-    color: colors.text,
-    paddingVertical: 16,
-    fontFamily: 'Poppins_400Regular',
-  },
-  errorContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 60, 56, 0.1)',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 16,
-    gap: 8,
-  },
-  errorText: {
-    flex: 1,
-    fontSize: 14,
-    color: colors.queueRed,
-    fontFamily: 'Poppins_400Regular',
-  },
-  loginButton: {
-    paddingVertical: 16,
-    borderRadius: 12,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#6A00F5',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 6,
+    marginBottom: spacing.md,
+    ...shadows.glowPurple,
   },
-  loginButtonText: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    fontFamily: 'Poppins_700Bold',
+  logo: {
+    ...typography.h1,
+    color: colors.textLight,
+    fontSize: 28,
   },
-  forgotPassword: {
-    alignItems: 'center',
-    marginTop: 16,
+  title: {
+    ...typography.h2,
+    color: colors.text,
+    marginBottom: spacing.xs,
+  },
+  subtitle: {
+    ...typography.body,
+    color: colors.textGray,
+    textAlign: 'center',
+  },
+  form: {
+    marginBottom: spacing.xl,
+  },
+  inputGroup: {
+    marginBottom: spacing.md,
+  },
+  label: {
+    ...typography.bodySmall,
+    color: colors.textGray,
+    marginBottom: spacing.xs,
+    fontWeight: '600',
+  },
+  input: {
+    backgroundColor: colors.backgroundGray,
+    borderRadius: borderRadius.md,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
+    ...typography.body,
+    color: colors.text,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  inputError: {
+    borderColor: colors.error,
+    borderWidth: 2,
+  },
+  errorText: {
+    ...typography.bodySmall,
+    color: colors.error,
+    marginTop: spacing.xs,
+  },
+  forgotPasswordButton: {
+    alignSelf: 'flex-end',
+    marginBottom: spacing.lg,
   },
   forgotPasswordText: {
-    fontSize: 14,
+    ...typography.bodySmall,
     color: colors.primary,
-    fontFamily: 'Poppins_600SemiBold',
+    fontWeight: '600',
+  },
+  loginButton: {
+    backgroundColor: colors.neonGreen,
+    borderRadius: borderRadius.md,
+    paddingVertical: spacing.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadows.glow,
+  },
+  loginButtonDisabled: {
+    opacity: 0.6,
+  },
+  loginButtonText: {
+    ...typography.button,
+    color: colors.text,
   },
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 24,
+    marginVertical: spacing.lg,
   },
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: colors.border,
   },
   dividerText: {
-    fontSize: 14,
-    color: '#999',
-    marginHorizontal: 16,
-    fontFamily: 'Poppins_400Regular',
+    ...typography.bodySmall,
+    color: colors.textGray,
+    marginHorizontal: spacing.md,
   },
-  createAccountButton: {
-    borderWidth: 2,
-    borderColor: colors.primary,
-    borderRadius: 12,
-    paddingVertical: 16,
+  signupButton: {
     alignItems: 'center',
+    paddingVertical: spacing.sm,
   },
-  createAccountText: {
-    fontSize: 16,
-    fontWeight: '600',
+  signupButtonText: {
+    ...typography.body,
+    color: colors.textGray,
+  },
+  signupButtonTextBold: {
     color: colors.primary,
-    fontFamily: 'Poppins_600SemiBold',
+    fontWeight: '700',
+  },
+  footer: {
+    marginTop: 'auto',
+    paddingTop: spacing.lg,
+  },
+  footerText: {
+    ...typography.caption,
+    color: colors.textGray,
+    textAlign: 'center',
+    lineHeight: 18,
+  },
+  footerLink: {
+    color: colors.primary,
+    fontWeight: '600',
   },
 });

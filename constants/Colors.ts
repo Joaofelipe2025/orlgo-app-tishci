@@ -1,301 +1,147 @@
 
-const tintColorLight = "#6A00F5";
-const tintColorDark = "#9A00FF";
+/**
+ * OrlGo Brand Colors
+ * Purple-themed color palette for the Orlando theme park guide app
+ */
 
-export const zincColors = {
-  50: "#fafafa",
-  100: "#f4f4f5",
-  200: "#e4e4e7",
-  300: "#d4d4d8",
-  400: "#a1a1aa",
-  500: "#71717a",
-  600: "#52525b",
-  700: "#3f3f46",
-  800: "#27272a",
-  900: "#18181b",
-  950: "#09090b",
+export const OrlGoColors = {
+  // Primary Brand Colors
+  primary: '#6A00F5',           // Primary Purple
+  primaryDark: '#5500C7',       // Darker Purple
+  primaryLight: '#8A33FF',      // Lighter Purple
+  
+  // Accent Colors
+  neonGreen: '#C6FF00',         // Neon Green (CTAs, highlights)
+  neonGreenDark: '#A8D900',     // Darker Neon Green
+  
+  // Gradients
+  gradientStart: '#6A00F5',     // Purple gradient start
+  gradientEnd: '#9A00FF',       // Purple gradient end
+  gradientGreen: '#C6FF00',     // Green gradient accent
+  
+  // Wait Time Colors (Queue Status)
+  queueGreen: '#C6FF00',        // 0-30 min (short wait)
+  queueYellow: '#FFC300',       // 31-60 min (medium wait)
+  queueRed: '#FF3C38',          // 61+ min (long wait)
+  queueGray: '#8E8E93',         // Closed/Unknown
+  
+  // Semantic Colors
+  success: '#34C759',
+  warning: '#FF9500',
+  error: '#FF3B30',
+  info: '#007AFF',
+  
+  // Text Colors (Light Mode)
+  textLight: '#FFFFFF',
+  textDark: '#1A1A1A',
+  textGray: '#8E8E93',
+  textMuted: '#C7C7CC',
+  
+  // Background Colors (Light Mode)
+  backgroundLight: '#FFFFFF',
+  backgroundGray: '#F2F2F7',
+  backgroundDark: '#1C1C1E',
+  
+  // Card & Surface Colors
+  cardLight: '#FFFFFF',
+  cardDark: '#2C2C2E',
+  
+  // Border Colors
+  border: '#E5E5EA',
+  borderDark: '#38383A',
+  
+  // Shadow Colors
+  shadow: 'rgba(0, 0, 0, 0.1)',
+  shadowDark: 'rgba(0, 0, 0, 0.3)',
+  
+  // Overlay Colors
+  overlay: 'rgba(0, 0, 0, 0.5)',
+  overlayLight: 'rgba(0, 0, 0, 0.3)',
 };
 
-// ORLGO Brand Colors
-export const orlgoColors = {
-  primary: "#6A00F5",        // Primary Purple
-  primaryDark: "#5500C7",    // Darker Purple for pressed states
-  neonGreen: "#C6FF00",      // Neon Green accent
-  gradientStart: "#6A00F5",  // Gradient start
-  gradientEnd: "#9A00FF",    // Gradient end
-  gradientGreen: "#C6FF00",  // Green gradient variant
-  textLight: "#FFFFFF",      // Light text
-  textDark: "#1A1A1A",       // Dark text
-  queueGreen: "#C6FF00",     // Queue status - short wait
-  queueYellow: "#FFC300",    // Queue status - medium wait
-  queueRed: "#FF3C38",       // Queue status - long wait
-  background: "#0A0014",     // Deep purple-black background
-  backgroundAlt: "#1A0033",  // Alternative background
-  cardBg: "#2A0055",         // Card background
-};
-
-export const appleBlue = "#007AFF";
-export const appleRed = "#FF3B30";
-export const borderColor = "#A1A1AA80";
-export const appleGreen = "#34C759";
-
+/**
+ * Theme-aware colors that adapt to light/dark mode
+ */
 export const Colors = {
   light: {
-    text: "#1A1A1A",
-    background: "#FFFFFF",
-    tint: tintColorLight,
-    icon: "#6A00F5",
-    tabIconDefault: "#687076",
-    tabIconSelected: tintColorLight,
-    card: "#F5F5F5",
-    border: "#E0E0E0",
+    text: OrlGoColors.textDark,
+    textSecondary: OrlGoColors.textGray,
+    textMuted: OrlGoColors.textMuted,
+    background: OrlGoColors.backgroundLight,
+    backgroundSecondary: OrlGoColors.backgroundGray,
+    card: OrlGoColors.cardLight,
+    border: OrlGoColors.border,
+    primary: OrlGoColors.primary,
+    accent: OrlGoColors.neonGreen,
+    shadow: OrlGoColors.shadow,
+    overlay: OrlGoColors.overlay,
+    tint: OrlGoColors.primary,
+    tabIconDefault: OrlGoColors.textGray,
+    tabIconSelected: OrlGoColors.primary,
   },
   dark: {
-    text: "#FFFFFF",
-    background: "#0A0014",
-    tint: tintColorDark,
-    icon: "#C6FF00",
-    tabIconDefault: "#9BA1A6",
-    tabIconSelected: tintColorDark,
-    card: "#2A0055",
-    border: "#6A00F5",
+    text: OrlGoColors.textLight,
+    textSecondary: OrlGoColors.textGray,
+    textMuted: OrlGoColors.textMuted,
+    background: OrlGoColors.backgroundDark,
+    backgroundSecondary: '#000000',
+    card: OrlGoColors.cardDark,
+    border: OrlGoColors.borderDark,
+    primary: OrlGoColors.primary,
+    accent: OrlGoColors.neonGreen,
+    shadow: OrlGoColors.shadowDark,
+    overlay: OrlGoColors.overlay,
+    tint: OrlGoColors.primaryLight,
+    tabIconDefault: OrlGoColors.textGray,
+    tabIconSelected: OrlGoColors.neonGreen,
   },
 };
 
-export const backgroundColors = [
-  "#fef2f2",
-  "#fee2e2",
-  "#fecaca",
-  "#fca5a5",
-  "#f87171",
-  "#ef4444",
-  "#dc2626",
-  "#b91c1c",
-  "#991b1b",
-  "#7f1d1d",
+/**
+ * Get wait time color based on minutes
+ */
+export function getWaitTimeColor(waitTime: number | null): string {
+  if (waitTime === null || waitTime === undefined) {
+    return OrlGoColors.queueGray;
+  }
+  
+  if (waitTime <= 30) {
+    return OrlGoColors.queueGreen;
+  } else if (waitTime <= 60) {
+    return OrlGoColors.queueYellow;
+  } else {
+    return OrlGoColors.queueRed;
+  }
+}
 
-  "#fff7ed",
-  "#ffedd5",
-  "#fed7aa",
-  "#fdba74",
-  "#fb923c",
-  "#f97316",
-  "#ea580c",
-  "#c2410c",
-  "#9a3412",
-  "#7c2d12",
+/**
+ * Get wait time label
+ */
+export function getWaitTimeLabel(waitTime: number | null): string {
+  if (waitTime === null || waitTime === undefined) {
+    return 'Sem informação';
+  }
+  
+  if (waitTime === 0) {
+    return 'Sem fila';
+  }
+  
+  return `${waitTime} min`;
+}
 
-  "#fffbeb",
-  "#fef3c7",
-  "#fde68a",
-  "#fcd34d",
-  "#fbbf24",
-  "#f59e0b",
-  "#d97706",
-  "#b45309",
-  "#92400e",
-  "#78350f",
-
-  "#fefce8",
-  "#fef9c3",
-  "#fef08a",
-  "#fde047",
-  "#facc15",
-  "#eab308",
-  "#ca8a04",
-  "#a16207",
-  "#854d0e",
-  "#713f12",
-
-  "#f7fee7",
-  "#ecfccb",
-  "#d9f99d",
-  "#bef264",
-  "#a3e635",
-  "#84cc16",
-  "#65a30d",
-  "#4d7c0f",
-  "#3f6212",
-  "#365314",
-
-  "#f0fdf4",
-  "#dcfce7",
-  "#bbf7d0",
-  "#86efac",
-  "#4ade80",
-  "#22c55e",
-  "#16a34a",
-  "#15803d",
-  "#166534",
-  "#14532d",
-
-  "#ecfdf5",
-  "#d1fae5",
-  "#a7f3d0",
-  "#6ee7b7",
-  "#34d399",
-  "#10b981",
-  "#059669",
-  "#047857",
-  "#065f46",
-  "#064e3b",
-
-  "#f0fdfa",
-  "#ccfbf1",
-  "#99f6e4",
-  "#5eead4",
-  "#2dd4bf",
-  "#14b8a6",
-  "#0d9488",
-  "#0f766e",
-  "#115e59",
-  "#134e4a",
-
-  "#f0f9ff",
-  "#e0f2fe",
-  "#bae6fd",
-  "#7dd3fc",
-  "#38bdf8",
-  "#0ea5e9",
-  "#0284c7",
-  "#0369a1",
-  "#075985",
-  "#0c4a6e",
-
-  "#eff6ff",
-  "#dbeafe",
-  "#bfdbfe",
-  "#93c5fd",
-  "#60a5fa",
-  "#3b82f6",
-  "#2563eb",
-  "#1d4ed8",
-  "#1e40af",
-  "#1e3a8a",
-
-  "#eef2ff",
-  "#e0e7ff",
-  "#c7d2fe",
-  "#a5b4fc",
-  "#818cf8",
-  "#6366f1",
-  "#4f46e5",
-  "#4338ca",
-  "#3730a3",
-  "#312e81",
-
-  "#f5f3ff",
-  "#ede9fe",
-  "#ddd6fe",
-  "#c4b5fd",
-  "#a78bfa",
-  "#8b5cf6",
-  "#7c3aed",
-  "#6d28d9",
-  "#5b21b6",
-  "#4c1d95",
-
-  "#faf5ff",
-  "#f3e8ff",
-  "#e9d5ff",
-  "#d8b4fe",
-  "#c084fc",
-  "#a855f7",
-  "#9333ea",
-  "#7e22ce",
-  "#6b21a8",
-  "#581c87",
-
-  "#fdf4ff",
-  "#fae8ff",
-  "#f5d0fe",
-  "#f0abfc",
-  "#e879f9",
-  "#d946ef",
-  "#c026d3",
-  "#a21caf",
-  "#86198f",
-  "#701a75",
-
-  "#fdf2f8",
-  "#fce7f3",
-  "#fbcfe8",
-  "#f9a8d4",
-  "#f472b6",
-  "#ec4899",
-  "#db2777",
-  "#be185d",
-  "#9d174d",
-  "#831843",
-
-  "#fff1f2",
-  "#ffe4e6",
-  "#fecdd3",
-  "#fda4af",
-  "#fb7185",
-  "#f43f5e",
-  "#e11d48",
-  "#be123c",
-  "#9f1239",
-  "#881337",
-];
-
-export const emojies = [
-  // Theme Park Emojis
-  "🎢",
-  "🎡",
-  "🎠",
-  "🎪",
-  "🎭",
-  "🎬",
-  "🎨",
-  "🎯",
-  "🎮",
-  "🎰",
-  "🎲",
-  "🎳",
-  "🎸",
-  "🎺",
-  "🎻",
-  "🎹",
-  "🥁",
-  "🎤",
-  "🎧",
-  "🎼",
-  "🎵",
-  "🎶",
-  "🎙",
-  "📻",
-  "📺",
-  "📷",
-  "📸",
-  "📹",
-  "🎥",
-  "📽",
-  "🎞",
-  "📞",
-  "☎️",
-  "📱",
-  "📲",
-  "💻",
-  "⌨️",
-  "🖥",
-  "🖨",
-  "🖱",
-  "🖲",
-  "🕹",
-  "🗜",
-  "💾",
-  "💿",
-  "📀",
-  "📼",
-  "📷",
-  "📸",
-  "📹",
-  "🎥",
-  "📽",
-  "🎞",
-  "📞",
-  "☎️",
-  "📱",
-];
+/**
+ * Get queue status text
+ */
+export function getQueueStatus(waitTime: number | null): 'short' | 'medium' | 'long' | 'unknown' {
+  if (waitTime === null || waitTime === undefined) {
+    return 'unknown';
+  }
+  
+  if (waitTime <= 30) {
+    return 'short';
+  } else if (waitTime <= 60) {
+    return 'medium';
+  } else {
+    return 'long';
+  }
+}

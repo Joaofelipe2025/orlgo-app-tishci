@@ -1,365 +1,271 @@
 
-import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Platform, TouchableOpacity, Linking } from "react-native";
-import { useRouter } from "expo-router";
-import { LinearGradient } from "expo-linear-gradient";
-import { IconSymbol } from "@/components/IconSymbol";
-import { colors } from "@/styles/commonStyles";
-import { useUser } from "@/contexts/UserContext";
-import { useItinerary } from "@/contexts/ItineraryContext";
-
-type TabType = 'account' | 'preferences' | 'help';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  ActivityIndicator,
+  Platform,
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useAuth } from '@/contexts/AuthContext';
+import { colors, typography, spacing, borderRadius, shadows } from '@/styles/commonStyles';
+import { OrlGoColors } from '@/constants/Colors';
+import { IconSymbol } from '@/components/IconSymbol';
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { user, isLoggedIn, logout } = useUser();
-  const { clearItinerary } = useItinerary();
-  const [activeTab, setActiveTab] = useState<TabType>('account');
+  const { user, profile, isAuthenticated, signOut, deleteAccount } = useAuth();
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    router.push('/(tabs)/login');
+  const handleSignOut = async () => {
+    Alert.alert(
+      'Sair',
+      'Tem certeza que deseja sair?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Sair',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setLoading(true);
+              await signOut();
+              router.replace('/(tabs)/login');
+            } catch (error: any) {
+              Alert.alert('Erro', error.message || 'Erro ao sair');
+            } finally {
+              setLoading(false);
+            }
+          },
+        },
+      ]
+    );
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      'Deletar Conta',
+      'Esta ação é irreversível. Todos os seus dados, incluindo roteiros e favoritos, serão permanentemente deletados. Tem certeza?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Deletar',
+          style: 'destructive',
+          onPress: () => {
+            Alert.alert(
+              'Confirmação Final',
+              'Digite "DELETAR" para confirmar a exclusão da sua conta.',
+              [
+                { text: 'Cancelar', style: 'cancel' },
+                {
+                  text: 'Confirmar',
+                  style: 'destructive',
+                  onPress: async () => {
+                    try {
+                      setLoading(true);
+                      await deleteAccount();
+                      router.replace('/(tabs)/login');
+                    } catch (error: any) {
+                      Alert.alert('Erro', error.message || 'Erro ao deletar conta');
+                    } finally {
+                      setLoading(false);
+                    }
+                  },
+                },
+              ]
+            );
+          },
+        },
+      ]
+    );
   };
 
-  const handleEmergencyCall = (number: string) => {
-    Linking.openURL(`tel:${number}`);
-  };
-
-  const handleWhatsApp = () => {
-    Linking.openURL('https://wa.me/1234567890');
-  };
-
-  const handleEmail = () => {
-    Linking.openURL('mailto:support@orlgo.com');
-  };
-
-  const renderAccountTab = () => (
-    <View style={styles.tabContent}>
-      {isLoggedIn && user ? (
-        <>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>Nome</Text>
-            <Text style={styles.infoValue}>{user.name}</Text>
+  if (!isAuthenticated) {
+    return (
+      <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <View style={styles.unauthContainer}>
+            <LinearGradient
+              colors={[OrlGoColors.gradientStart, OrlGoColors.gradientEnd]}
+              style={styles.logoContainer}
+            >
+              <Text style={styles.logo}>OrlGo</Text>
+            </LinearGradient>
+            <Text style={styles.unauthTitle}>Bem-vindo ao OrlGo!</Text>
+            <Text style={styles.unauthSubtitle}>
+              Entre ou crie uma conta para salvar seus roteiros e favoritos
+            </Text>
+            <TouchableOpacity
+              style={styles.loginButton}
+              onPress={() => router.push('/(tabs)/login')}
+            >
+              <Text style={styles.loginButtonText}>Entrar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.signupButton}
+              onPress={() => router.push('/(tabs)/signup')}
+            >
+              <Text style={styles.signupButtonText}>Criar Conta</Text>
+            </TouchableOpacity>
           </View>
-
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>Email</Text>
-            <Text style={styles.infoValue}>{user.email}</Text>
-          </View>
-
-          <TouchableOpacity style={styles.actionButton} onPress={handleLogout}>
-            <IconSymbol
-              ios_icon_name="arrow.right.square"
-              android_material_icon_name="logout"
-              size={20}
-              color={colors.queueRed}
-            />
-            <Text style={[styles.actionButtonText, { color: colors.queueRed }]}>Sair da Conta</Text>
-          </TouchableOpacity>
-        </>
-      ) : (
-        <View style={styles.emptyState}>
-          <IconSymbol
-            ios_icon_name="person.circle"
-            android_material_icon_name="account-circle"
-            size={80}
-            color="#999"
-          />
-          <Text style={styles.emptyStateText}>Você não está logado</Text>
-          <Text style={styles.emptyStateSubtext}>
-            Faça login para salvar suas preferências e roteiros
-          </Text>
-        </View>
-      )}
-    </View>
-  );
-
-  const renderPreferencesTab = () => (
-    <View style={styles.tabContent}>
-      <TouchableOpacity style={styles.preferenceItem}>
-        <View style={styles.preferenceLeft}>
-          <IconSymbol
-            ios_icon_name="globe"
-            android_material_icon_name="language"
-            size={24}
-            color={colors.primary}
-          />
-          <View style={styles.preferenceInfo}>
-            <Text style={styles.preferenceTitle}>Idioma</Text>
-            <Text style={styles.preferenceValue}>Português (BR)</Text>
-          </View>
-        </View>
-        <IconSymbol
-          ios_icon_name="chevron.right"
-          android_material_icon_name="chevron-right"
-          size={20}
-          color="#999"
-        />
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.preferenceItem}>
-        <View style={styles.preferenceLeft}>
-          <IconSymbol
-            ios_icon_name="dollarsign.circle"
-            android_material_icon_name="attach-money"
-            size={24}
-            color={colors.primary}
-          />
-          <View style={styles.preferenceInfo}>
-            <Text style={styles.preferenceTitle}>Moeda</Text>
-            <Text style={styles.preferenceValue}>Real (R$)</Text>
-          </View>
-        </View>
-        <IconSymbol
-          ios_icon_name="chevron.right"
-          android_material_icon_name="chevron-right"
-          size={20}
-          color="#999"
-        />
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.preferenceItem}>
-        <View style={styles.preferenceLeft}>
-          <IconSymbol
-            ios_icon_name="bell.fill"
-            android_material_icon_name="notifications"
-            size={24}
-            color={colors.primary}
-          />
-          <View style={styles.preferenceInfo}>
-            <Text style={styles.preferenceTitle}>Notificações</Text>
-            <Text style={styles.preferenceValue}>Ativadas</Text>
-          </View>
-        </View>
-        <IconSymbol
-          ios_icon_name="chevron.right"
-          android_material_icon_name="chevron-right"
-          size={20}
-          color="#999"
-        />
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.actionButton} onPress={clearItinerary}>
-        <IconSymbol
-          ios_icon_name="trash"
-          android_material_icon_name="delete"
-          size={20}
-          color={colors.queueRed}
-        />
-        <Text style={[styles.actionButtonText, { color: colors.queueRed }]}>Limpar Roteiro</Text>
-      </TouchableOpacity>
-    </View>
-  );
-
-  const renderHelpTab = () => (
-    <View style={styles.tabContent}>
-      <Text style={styles.sectionTitle}>Emergências</Text>
-      
-      <TouchableOpacity
-        style={styles.emergencyCard}
-        onPress={() => handleEmergencyCall('911')}
-      >
-        <View style={styles.emergencyIcon}>
-          <IconSymbol
-            ios_icon_name="phone.fill"
-            android_material_icon_name="phone"
-            size={28}
-            color="#FFFFFF"
-          />
-        </View>
-        <View style={styles.emergencyInfo}>
-          <Text style={styles.emergencyTitle}>Emergência 911</Text>
-          <Text style={styles.emergencySubtitle}>Toque para discar</Text>
-        </View>
-        <IconSymbol
-          ios_icon_name="chevron.right"
-          android_material_icon_name="chevron-right"
-          size={24}
-          color={colors.queueRed}
-        />
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.helpCard}
-        onPress={() => console.log('Tourist Police')}
-      >
-        <IconSymbol
-          ios_icon_name="shield.fill"
-          android_material_icon_name="security"
-          size={24}
-          color={colors.primary}
-        />
-        <View style={styles.helpCardInfo}>
-          <Text style={styles.helpCardTitle}>Polícia Turística</Text>
-          <Text style={styles.helpCardSubtitle}>Assistência para turistas</Text>
-        </View>
-        <IconSymbol
-          ios_icon_name="chevron.right"
-          android_material_icon_name="chevron-right"
-          size={20}
-          color="#999"
-        />
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.helpCard}
-        onPress={() => console.log('Nearest Hospital')}
-      >
-        <IconSymbol
-          ios_icon_name="cross.fill"
-          android_material_icon_name="local-hospital"
-          size={24}
-          color={colors.primary}
-        />
-        <View style={styles.helpCardInfo}>
-          <Text style={styles.helpCardTitle}>Hospital mais próximo</Text>
-          <Text style={styles.helpCardSubtitle}>Encontre atendimento médico</Text>
-        </View>
-        <IconSymbol
-          ios_icon_name="chevron.right"
-          android_material_icon_name="chevron-right"
-          size={20}
-          color="#999"
-        />
-      </TouchableOpacity>
-
-      <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Suporte do App</Text>
-
-      <TouchableOpacity style={styles.supportCard} onPress={handleWhatsApp}>
-        <IconSymbol
-          ios_icon_name="message.fill"
-          android_material_icon_name="chat"
-          size={24}
-          color={colors.queueGreen}
-        />
-        <View style={styles.supportCardInfo}>
-          <Text style={styles.supportCardTitle}>WhatsApp</Text>
-          <Text style={styles.supportCardSubtitle}>Fale conosco pelo WhatsApp</Text>
-        </View>
-        <IconSymbol
-          ios_icon_name="chevron.right"
-          android_material_icon_name="chevron-right"
-          size={20}
-          color="#999"
-        />
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.supportCard} onPress={handleEmail}>
-        <IconSymbol
-          ios_icon_name="envelope.fill"
-          android_material_icon_name="email"
-          size={24}
-          color={colors.primary}
-        />
-        <View style={styles.supportCardInfo}>
-          <Text style={styles.supportCardTitle}>Email</Text>
-          <Text style={styles.supportCardSubtitle}>support@orlgo.com</Text>
-        </View>
-        <IconSymbol
-          ios_icon_name="chevron.right"
-          android_material_icon_name="chevron-right"
-          size={20}
-          color="#999"
-        />
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.supportCard}
-        onPress={() => console.log('FAQ')}
-      >
-        <IconSymbol
-          ios_icon_name="questionmark.circle.fill"
-          android_material_icon_name="help"
-          size={24}
-          color={colors.primary}
-        />
-        <View style={styles.supportCardInfo}>
-          <Text style={styles.supportCardTitle}>FAQ</Text>
-          <Text style={styles.supportCardSubtitle}>Perguntas frequentes</Text>
-        </View>
-        <IconSymbol
-          ios_icon_name="chevron.right"
-          android_material_icon_name="chevron-right"
-          size={20}
-          color="#999"
-        />
-      </TouchableOpacity>
-    </View>
-  );
+        </ScrollView>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      {/* Compact Header with white text */}
-      <LinearGradient
-        colors={['#6A00F5', '#9A00FF']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.header}
-      >
-        <View style={styles.profileHeader}>
-          <IconSymbol
-            ios_icon_name="person.circle.fill"
-            android_material_icon_name="account-circle"
-            size={60}
-            color="#FFFFFF"
-          />
-          <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>
-              {isLoggedIn && user ? user.name : 'Visitante'}
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.header}>
+          <LinearGradient
+            colors={[OrlGoColors.gradientStart, OrlGoColors.gradientEnd]}
+            style={styles.avatarContainer}
+          >
+            <Text style={styles.avatarText}>
+              {profile?.full_name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || '?'}
             </Text>
-            {!isLoggedIn && (
-              <TouchableOpacity onPress={handleLogin}>
-                <Text style={styles.loginButton}>Entrar na Conta</Text>
-              </TouchableOpacity>
-            )}
-          </View>
+          </LinearGradient>
+          <Text style={styles.name}>{profile?.full_name || 'Usuário'}</Text>
+          <Text style={styles.email}>{user?.email}</Text>
         </View>
-      </LinearGradient>
 
-      {/* Tabs */}
-      <View style={styles.tabsContainer}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'account' && styles.tabActive]}
-          onPress={() => setActiveTab('account')}
-        >
-          <Text style={[styles.tabText, activeTab === 'account' && styles.tabTextActive]}>
-            Conta
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Conta</Text>
+          
+          <TouchableOpacity style={styles.menuItem}>
+            <View style={styles.menuItemLeft}>
+              <IconSymbol
+                ios_icon_name="person.circle"
+                android_material_icon_name="person"
+                size={24}
+                color={colors.primary}
+              />
+              <Text style={styles.menuItemText}>Editar Perfil</Text>
+            </View>
+            <IconSymbol
+              ios_icon_name="chevron.right"
+              android_material_icon_name="chevron-right"
+              size={20}
+              color={colors.textGray}
+            />
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'preferences' && styles.tabActive]}
-          onPress={() => setActiveTab('preferences')}
-        >
-          <Text style={[styles.tabText, activeTab === 'preferences' && styles.tabTextActive]}>
-            Preferências
-          </Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem}>
+            <View style={styles.menuItemLeft}>
+              <IconSymbol
+                ios_icon_name="lock.fill"
+                android_material_icon_name="lock"
+                size={24}
+                color={colors.primary}
+              />
+              <Text style={styles.menuItemText}>Alterar Senha</Text>
+            </View>
+            <IconSymbol
+              ios_icon_name="chevron.right"
+              android_material_icon_name="chevron-right"
+              size={20}
+              color={colors.textGray}
+            />
+          </TouchableOpacity>
+        </View>
 
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'help' && styles.tabActive]}
-          onPress={() => setActiveTab('help')}
-        >
-          <Text style={[styles.tabText, activeTab === 'help' && styles.tabTextActive]}>
-            Ajuda
-          </Text>
-        </TouchableOpacity>
-      </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Legal</Text>
+          
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => router.push('/(tabs)/terms')}
+          >
+            <View style={styles.menuItemLeft}>
+              <IconSymbol
+                ios_icon_name="doc.text"
+                android_material_icon_name="description"
+                size={24}
+                color={colors.primary}
+              />
+              <Text style={styles.menuItemText}>Termos de Serviço</Text>
+            </View>
+            <IconSymbol
+              ios_icon_name="chevron.right"
+              android_material_icon_name="chevron-right"
+              size={20}
+              color={colors.textGray}
+            />
+          </TouchableOpacity>
 
-      {/* Tab Content */}
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {activeTab === 'account' && renderAccountTab()}
-        {activeTab === 'preferences' && renderPreferencesTab()}
-        {activeTab === 'help' && renderHelpTab()}
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => router.push('/(tabs)/privacy')}
+          >
+            <View style={styles.menuItemLeft}>
+              <IconSymbol
+                ios_icon_name="shield.fill"
+                android_material_icon_name="security"
+                size={24}
+                color={colors.primary}
+              />
+              <Text style={styles.menuItemText}>Política de Privacidade</Text>
+            </View>
+            <IconSymbol
+              ios_icon_name="chevron.right"
+              android_material_icon_name="chevron-right"
+              size={20}
+              color={colors.textGray}
+            />
+          </TouchableOpacity>
+        </View>
 
-        {/* Bottom spacing for tab bar */}
-        <View style={{ height: 120 }} />
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Ações</Text>
+          
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={handleSignOut}
+            disabled={loading}
+          >
+            <View style={styles.menuItemLeft}>
+              <IconSymbol
+                ios_icon_name="arrow.right.square"
+                android_material_icon_name="logout"
+                size={24}
+                color={colors.warning}
+              />
+              <Text style={[styles.menuItemText, { color: colors.warning }]}>
+                Sair
+              </Text>
+            </View>
+            {loading && <ActivityIndicator size="small" color={colors.warning} />}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={handleDeleteAccount}
+            disabled={loading}
+          >
+            <View style={styles.menuItemLeft}>
+              <IconSymbol
+                ios_icon_name="trash.fill"
+                android_material_icon_name="delete"
+                size={24}
+                color={colors.error}
+              />
+              <Text style={[styles.menuItemText, { color: colors.error }]}>
+                Deletar Conta
+              </Text>
+            </View>
+            {loading && <ActivityIndicator size="small" color={colors.error} />}
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>OrlGo v1.0.0</Text>
+          <Text style={styles.footerText}>Orlando Theme Parks Guide</Text>
+        </View>
       </ScrollView>
     </View>
   );
@@ -368,228 +274,141 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  header: {
-    paddingTop: Platform.OS === 'android' ? 48 : 60,
-    paddingBottom: 16,
-    paddingHorizontal: 20,
-  },
-  profileHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-  },
-  profileInfo: {
-    flex: 1,
-  },
-  profileName: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: 4,
-    fontFamily: 'Poppins_700Bold',
-  },
-  loginButton: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    fontFamily: 'Poppins_600SemiBold',
-  },
-  tabsContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#F3F4F6',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    gap: 8,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 10,
-    alignItems: 'center',
-    borderRadius: 8,
-  },
-  tabActive: {
-    backgroundColor: colors.primary,
-  },
-  tabText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#999',
-    fontFamily: 'Poppins_600SemiBold',
-  },
-  tabTextActive: {
-    color: '#FFFFFF',
+    backgroundColor: colors.background,
   },
   scrollContent: {
-    padding: 20,
+    flexGrow: 1,
+    paddingTop: Platform.OS === 'android' ? 48 : 0,
   },
-  tabContent: {
-    gap: 16,
+  header: {
+    alignItems: 'center',
+    paddingVertical: spacing.xl,
+    paddingHorizontal: spacing.lg,
   },
-  infoSection: {
-    backgroundColor: '#F9FAFB',
-    borderRadius: 12,
-    padding: 16,
-  },
-  infoLabel: {
-    fontSize: 12,
-    color: '#999',
-    marginBottom: 6,
-    fontFamily: 'Poppins_400Regular',
-  },
-  infoValue: {
-    fontSize: 16,
-    color: '#1A1A1A',
-    fontFamily: 'Poppins_600SemiBold',
-  },
-  actionButton: {
-    flexDirection: 'row',
+  avatarContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F9FAFB',
-    paddingVertical: 14,
-    borderRadius: 12,
-    gap: 10,
-    marginTop: 8,
+    marginBottom: spacing.md,
+    ...shadows.glowPurple,
   },
-  actionButtonText: {
-    fontSize: 16,
+  avatarText: {
+    ...typography.h1,
+    color: colors.textLight,
+    fontSize: 40,
+  },
+  name: {
+    ...typography.h3,
+    color: colors.text,
+    marginBottom: spacing.xs,
+  },
+  email: {
+    ...typography.body,
+    color: colors.textGray,
+  },
+  section: {
+    paddingHorizontal: spacing.lg,
+    marginBottom: spacing.lg,
+  },
+  sectionTitle: {
+    ...typography.bodySmall,
+    color: colors.textGray,
     fontWeight: '600',
-    fontFamily: 'Poppins_600SemiBold',
+    marginBottom: spacing.sm,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
-  emptyState: {
-    alignItems: 'center',
-    paddingVertical: 40,
-  },
-  emptyStateText: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#1A1A1A',
-    marginTop: 16,
-    marginBottom: 8,
-    fontFamily: 'Poppins_700Bold',
-  },
-  emptyStateSubtext: {
-    fontSize: 14,
-    color: '#999',
-    textAlign: 'center',
-    lineHeight: 20,
-    fontFamily: 'Poppins_400Regular',
-  },
-  preferenceItem: {
+  menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#F9FAFB',
-    padding: 16,
-    borderRadius: 12,
+    backgroundColor: colors.card,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    marginBottom: spacing.sm,
+    ...shadows.sm,
   },
-  preferenceLeft: {
+  menuItemLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
     flex: 1,
   },
-  preferenceInfo: {
+  menuItemText: {
+    ...typography.body,
+    color: colors.text,
+    marginLeft: spacing.md,
+  },
+  unauthContainer: {
     flex: 1,
-  },
-  preferenceTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1A1A1A',
-    marginBottom: 2,
-    fontFamily: 'Poppins_600SemiBold',
-  },
-  preferenceValue: {
-    fontSize: 13,
-    color: '#999',
-    fontFamily: 'Poppins_400Regular',
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1A1A1A',
-    marginBottom: 12,
-    fontFamily: 'Poppins_700Bold',
-  },
-  emergencyCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 60, 56, 0.1)',
-    padding: 16,
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: colors.queueRed,
-    gap: 12,
-  },
-  emergencyIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.queueRed,
     alignItems: 'center',
     justifyContent: 'center',
+    padding: spacing.lg,
   },
-  emergencyInfo: {
-    flex: 1,
-  },
-  emergencyTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: colors.queueRed,
-    marginBottom: 2,
-    fontFamily: 'Poppins_700Bold',
-  },
-  emergencySubtitle: {
-    fontSize: 13,
-    color: colors.queueRed,
-    fontFamily: 'Poppins_400Regular',
-  },
-  helpCard: {
-    flexDirection: 'row',
+  logoContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
-    padding: 16,
-    borderRadius: 12,
-    gap: 12,
+    justifyContent: 'center',
+    marginBottom: spacing.lg,
+    ...shadows.glowPurple,
   },
-  helpCardInfo: {
-    flex: 1,
+  logo: {
+    ...typography.h1,
+    color: colors.textLight,
+    fontSize: 36,
   },
-  helpCardTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1A1A1A',
-    marginBottom: 2,
-    fontFamily: 'Poppins_600SemiBold',
+  unauthTitle: {
+    ...typography.h2,
+    color: colors.text,
+    marginBottom: spacing.sm,
+    textAlign: 'center',
   },
-  helpCardSubtitle: {
-    fontSize: 13,
-    color: '#999',
-    fontFamily: 'Poppins_400Regular',
+  unauthSubtitle: {
+    ...typography.body,
+    color: colors.textGray,
+    textAlign: 'center',
+    marginBottom: spacing.xl,
+    lineHeight: 24,
   },
-  supportCard: {
-    flexDirection: 'row',
+  loginButton: {
+    backgroundColor: colors.neonGreen,
+    borderRadius: borderRadius.md,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
+    width: '100%',
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
-    padding: 16,
-    borderRadius: 12,
-    gap: 12,
+    marginBottom: spacing.md,
+    ...shadows.glow,
   },
-  supportCardInfo: {
-    flex: 1,
+  loginButtonText: {
+    ...typography.button,
+    color: colors.text,
   },
-  supportCardTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1A1A1A',
-    marginBottom: 2,
-    fontFamily: 'Poppins_600SemiBold',
+  signupButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: colors.primary,
+    borderRadius: borderRadius.md,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
+    width: '100%',
+    alignItems: 'center',
   },
-  supportCardSubtitle: {
-    fontSize: 13,
-    color: '#999',
-    fontFamily: 'Poppins_400Regular',
+  signupButtonText: {
+    ...typography.button,
+    color: colors.primary,
+  },
+  footer: {
+    alignItems: 'center',
+    paddingVertical: spacing.xl,
+    paddingHorizontal: spacing.lg,
+  },
+  footerText: {
+    ...typography.caption,
+    color: colors.textGray,
+    textAlign: 'center',
   },
 });

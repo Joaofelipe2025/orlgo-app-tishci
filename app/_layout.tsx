@@ -1,40 +1,62 @@
 
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
-import { useEffect } from 'react';
-import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
+import 'react-native-reanimated';
+import { useColorScheme } from 'react-native';
 import { UserProvider } from '@/contexts/UserContext';
+import { AuthProvider } from '@/contexts/AuthContext';
 import { ItineraryProvider } from '@/contexts/ItineraryContext';
+import { WidgetProvider } from '@/contexts/WidgetContext';
+import {
+  Poppins_400Regular,
+  Poppins_600SemiBold,
+  Poppins_700Bold,
+} from '@expo-google-fonts/poppins';
 
+// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [fontsLoaded] = useFonts({
+  const colorScheme = useColorScheme();
+  const [loaded] = useFonts({
     Poppins_400Regular,
     Poppins_600SemiBold,
     Poppins_700Bold,
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
   useEffect(() => {
-    if (fontsLoaded) {
+    if (loaded) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
+  }, [loaded]);
 
-  if (!fontsLoaded) {
+  if (!loaded) {
     return null;
   }
 
   return (
-    <UserProvider>
-      <ItineraryProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-          <Stack.Screen name="formsheet" options={{ presentation: 'formSheet' }} />
-          <Stack.Screen name="transparent-modal" options={{ presentation: 'transparentModal' }} />
-        </Stack>
-      </ItineraryProvider>
-    </UserProvider>
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <AuthProvider>
+        <UserProvider>
+          <ItineraryProvider>
+            <WidgetProvider>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+                <Stack.Screen name="transparent-modal" options={{ presentation: 'transparentModal' }} />
+                <Stack.Screen name="formsheet" options={{ presentation: 'formSheet' }} />
+                <Stack.Screen name="+not-found" />
+              </Stack>
+              <StatusBar style="auto" />
+            </WidgetProvider>
+          </ItineraryProvider>
+        </UserProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

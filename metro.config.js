@@ -1,3 +1,4 @@
+
 const { getDefaultConfig } = require('expo/metro-config');
 const { FileStore } = require('metro-cache');
 const path = require('path');
@@ -8,5 +9,8 @@ const config = getDefaultConfig(__dirname);
 config.cacheStores = [
     new FileStore({ root: path.join(__dirname, 'node_modules', '.cache', 'metro') }),
   ];
+
+// Enable package exports for Better Auth compatibility
+config.resolver.unstable_enablePackageExports = true;
 
 module.exports = config;
