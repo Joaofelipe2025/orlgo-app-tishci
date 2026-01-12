@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import type { User } from '@supabase/supabase-js';
 import * as authService from '@/services/authService';
 import { getCurrentUserProfile, type Profile } from '@/services/supabaseService';
@@ -24,10 +24,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const loadProfile = useCallback(async () => {
+    try {
+      const userProfile = await getCurrentUserProfile();
+      setProfile(userProfile);
+    } catch (error) {
+      console.error('Error loading profile:', error);
+    }
+  }, []);
+
+  const initAuth = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const currentUser = await authService.initializeAuth();
+      setUser(currentUser);
+      
+      if (currentUser) {
+        await loadProfile();
+      }
+    } catch (error) {
+      console.error('Error initializing auth:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [loadProfile]);
+
   // Initialize auth on mount
   useEffect(() => {
     initAuth();
-  }, []);
+  }, [initAuth]);
 
   // Listen to auth state changes
   useEffect(() => {
@@ -43,85 +68,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
-
-  const initAuth = async () => {
-    try {
-      setIsLoading(true);
-      const currentUser = await authService.initializeAuth();
-      setUser(currentUser);
-      
-      if (currentUser) {
-        await loadProfile();
-      }
-    } catch (error) {
-      console.error('Error initializing auth:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const loadProfile = async () => {
-    try {
-      const userProfile = await getCurrentUserProfile();
-      setProfile(userProfile);
-    } catch (error) {
-      console.error('Error loading profile:', error);
-    }
-  };
+  }, [loadProfile]);
 
   const signUp = async (email: string, password: string, fullName?: string) => {
-    try {
-      const { user: newUser } = await authService.signUp(email, password, fullName);
-      setUser(newUser);
-      
-      if (newUser) {
-        await loadProfile();
-      }
-    } catch (error) {
-      throw error;
+    const { user: newUser } = await authService.signUp(email, password, fullName);
+    setUser(newUser);
+    
+    if (newUser) {
+      await loadProfile();
     }
   };
 
   const signIn = async (email: string, password: string) => {
-    try {
-      const { user: signedInUser } = await authService.signIn(email, password);
-      setUser(signedInUser);
-      
-      if (signedInUser) {
-        await loadProfile();
-      }
-    } catch (error) {
-      throw error;
+    const { user: signedInUser } = await authService.signIn(email, password);
+    setUser(signedInUser);
+    
+    if (signedInUser) {
+      await loadProfile();
     }
   };
 
   const signOut = async () => {
-    try {
-      await authService.signOut();
-      setUser(null);
-      setProfile(null);
-    } catch (error) {
-      throw error;
-    }
+    await authService.signOut();
+    setUser(null);
+    setProfile(null);
   };
 
   const resetPassword = async (email: string) => {
-    try {
-      await authService.resetPassword(email);
-    } catch (error) {
-      throw error;
-    }
+    await authService.resetPassword(email);
   };
 
   const deleteAccount = async () => {
-    try {
-      await authService.deleteAccount();
-      setUser(null);
-      setProfile(null);
-    } catch (error) {
-      throw error;
-    }
+    await authService.deleteAccount();
+    setUser(null);
+    setProfile(null);
   };
 
   const refreshProfile = async () => {

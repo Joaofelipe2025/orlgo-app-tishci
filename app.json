@@ -1,8 +1,7 @@
-
 {
   "expo": {
-    "name": "OrlGo",
-    "slug": "orlgo",
+    "name": "Orlando Theme Parks",
+    "slug": "Orlando Theme Parks",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/natively-dark.png",
@@ -45,5 +44,6 @@
     "extra": {
       "router": {}
     }
-  }
+  },
+  "scheme": "Orlando Theme Parks"
 }

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -37,20 +37,7 @@ export default function ParkContentScreen() {
   // Check if this is Busch Gardens
   const isBuschGardens = park?.id === 'busch-gardens' || park?.apiEntityId === BUSCH_GARDENS.id;
 
-  useEffect(() => {
-    if (isBuschGardens) {
-      // Use new function with wait times for Busch Gardens
-      loadBuschGardensData();
-    } else if (park?.apiEntityId) {
-      // Use /live endpoint for other parks
-      loadLiveData();
-    } else {
-      // Use mock data if no API entity ID
-      loadMockData();
-    }
-  }, [park, isBuschGardens]);
-
-  const loadBuschGardensData = async () => {
+  const loadBuschGardensData = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -68,9 +55,9 @@ export default function ParkContentScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const loadLiveData = async () => {
+  const loadLiveData = useCallback(async () => {
     if (!park?.apiEntityId) return;
 
     setLoading(true);
@@ -89,7 +76,7 @@ export default function ParkContentScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [park?.apiEntityId]);
 
   const loadMockData = () => {
     // Mock data as fallback
@@ -189,6 +176,19 @@ export default function ParkContentScreen() {
     setShows(mockShows);
     setLoading(false);
   };
+
+  useEffect(() => {
+    if (isBuschGardens) {
+      // Use new function with wait times for Busch Gardens
+      loadBuschGardensData();
+    } else if (park?.apiEntityId) {
+      // Use /live endpoint for other parks
+      loadLiveData();
+    } else {
+      // Use mock data if no API entity ID
+      loadMockData();
+    }
+  }, [park, isBuschGardens, loadBuschGardensData, loadLiveData]);
 
   const handleBack = () => {
     router.back();

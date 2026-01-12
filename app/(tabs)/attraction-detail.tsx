@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -30,13 +30,7 @@ export default function AttractionDetailScreen() {
   const park = parkId ? getParkById(parkId) : null;
   const inItinerary = attractionId ? isInItinerary(attractionId) : false;
 
-  useEffect(() => {
-    if (attractionId) {
-      loadAttractionDetails();
-    }
-  }, [attractionId]);
-
-  const loadAttractionDetails = async () => {
+  const loadAttractionDetails = useCallback(async () => {
     if (!attractionId) return;
 
     setLoading(true);
@@ -58,7 +52,13 @@ export default function AttractionDetailScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [attractionId]);
+
+  useEffect(() => {
+    if (attractionId) {
+      loadAttractionDetails();
+    }
+  }, [attractionId, loadAttractionDetails]);
 
   const handleBack = () => {
     router.back();
