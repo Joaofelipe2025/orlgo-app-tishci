@@ -2,7 +2,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from './IconSymbol';
 import { colors } from '@/styles/commonStyles';
 
@@ -92,10 +91,7 @@ export function CommunitySection() {
                   style={styles.postImage}
                   resizeMode="cover"
                 />
-                <LinearGradient
-                  colors={['transparent', 'rgba(0,0,0,0.8)']}
-                  style={styles.postGradient}
-                >
+                <View style={styles.postOverlay}>
                   <View style={styles.postInfo}>
                     <Text style={styles.postUsername}>{post.username}</Text>
                     <Text style={styles.postCaption} numberOfLines={2}>
@@ -107,7 +103,7 @@ export function CommunitySection() {
                           ios_icon_name="location.fill"
                           android_material_icon_name="location-on"
                           size={12}
-                          color="#C6FF00"
+                          color={colors.primary}
                         />
                         <Text style={styles.postLocation}>{post.location}</Text>
                       </View>
@@ -116,13 +112,13 @@ export function CommunitySection() {
                           ios_icon_name="heart.fill"
                           android_material_icon_name="favorite"
                           size={12}
-                          color="#FF1493"
+                          color={colors.error}
                         />
                         <Text style={styles.postLikes}>{post.likes}</Text>
                       </View>
                     </View>
                   </View>
-                </LinearGradient>
+                </View>
               </View>
             </TouchableOpacity>
           </React.Fragment>
@@ -132,21 +128,15 @@ export function CommunitySection() {
       <TouchableOpacity
         activeOpacity={0.8}
         onPress={handleShareExperience}
+        style={styles.shareButton}
       >
-        <LinearGradient
-          colors={['#C6FF00', '#A3D900']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.shareButton}
-        >
-          <IconSymbol
-            ios_icon_name="camera.fill"
-            android_material_icon_name="photo-camera"
-            size={24}
-            color={colors.textDark}
-          />
-          <Text style={styles.shareButtonText}>Compartilhe sua mágica ✨📸</Text>
-        </LinearGradient>
+        <IconSymbol
+          ios_icon_name="camera.fill"
+          android_material_icon_name="photo-camera"
+          size={24}
+          color={colors.white}
+        />
+        <Text style={styles.shareButtonText}>Compartilhe sua mágica ✨📸</Text>
       </TouchableOpacity>
     </View>
   );
@@ -165,13 +155,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '700',
-    color: colors.text,
+    color: colors.primaryText,
     marginBottom: 4,
     fontFamily: 'Poppins_700Bold',
   },
   subtitle: {
     fontSize: 13,
-    color: '#999',
+    color: colors.secondaryText,
     fontFamily: 'Poppins_400Regular',
   },
   viewAllText: {
@@ -190,24 +180,28 @@ const styles = StyleSheet.create({
     height: 280,
     borderRadius: 16,
     overflow: 'hidden',
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.border,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.08,
     shadowRadius: 12,
-    elevation: 6,
+    elevation: 4,
   },
   postImage: {
     width: '100%',
     height: '100%',
   },
-  postGradient: {
+  postOverlay: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: '60%',
-    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     padding: 12,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
   postInfo: {
     gap: 4,
@@ -215,12 +209,12 @@ const styles = StyleSheet.create({
   postUsername: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.primaryText,
     fontFamily: 'Poppins_700Bold',
   },
   postCaption: {
     fontSize: 12,
-    color: '#FFFFFF',
+    color: colors.primaryText,
     lineHeight: 16,
     fontFamily: 'Poppins_400Regular',
   },
@@ -237,7 +231,7 @@ const styles = StyleSheet.create({
   },
   postLocation: {
     fontSize: 11,
-    color: '#C6FF00',
+    color: colors.primary,
     fontWeight: '600',
     fontFamily: 'Poppins_600SemiBold',
   },
@@ -248,7 +242,7 @@ const styles = StyleSheet.create({
   },
   postLikes: {
     fontSize: 11,
-    color: '#FFFFFF',
+    color: colors.primaryText,
     fontWeight: '600',
     fontFamily: 'Poppins_600SemiBold',
   },
@@ -256,20 +250,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     paddingHorizontal: 24,
     borderRadius: 16,
     gap: 12,
-    shadowColor: '#C6FF00',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 6,
   },
   shareButtonText: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.textDark,
+    color: colors.white,
     fontFamily: 'Poppins_700Bold',
   },
 });

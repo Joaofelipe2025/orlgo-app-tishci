@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from './IconSymbol';
 import { colors } from '@/styles/commonStyles';
 
@@ -35,7 +34,6 @@ export function WeatherWidget() {
     }
 
     // Mock weather data for Orlando
-    // In production, you would fetch from a weather API
     setTimeout(() => {
       setWeather({
         temperature: 75,
@@ -58,24 +56,14 @@ export function WeatherWidget() {
 
   if (loading) {
     return (
-      <LinearGradient
-        colors={['#6A00F5', '#9A00FF']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.container}
-      >
-        <ActivityIndicator size="large" color="#FFFFFF" />
-      </LinearGradient>
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
     );
   }
 
   return (
-    <LinearGradient
-      colors={['#6A00F5', '#9A00FF']}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.container}
-    >
+    <View style={styles.container}>
       {/* Greeting */}
       <Text style={styles.greeting}>{greeting}</Text>
       
@@ -85,7 +73,7 @@ export function WeatherWidget() {
           ios_icon_name="location.fill"
           android_material_icon_name="location-on"
           size={16}
-          color="#FFFFFF"
+          color={colors.primary}
         />
         <Text style={styles.location}>Orlando, FL</Text>
       </View>
@@ -97,7 +85,7 @@ export function WeatherWidget() {
             ios_icon_name="cloud.sun.fill"
             android_material_icon_name="wb-cloudy"
             size={64}
-            color="#FFFFFF"
+            color={colors.primary}
           />
         </View>
         
@@ -124,32 +112,35 @@ export function WeatherWidget() {
                 ios_icon_name="sun.max.fill"
                 android_material_icon_name="wb-sunny"
                 size={24}
-                color="#FFFFFF"
+                color={colors.primary}
               />
               <Text style={styles.forecastTemp}>{item.temp}°</Text>
             </View>
           </React.Fragment>
         ))}
       </View>
-    </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: colors.white,
     borderRadius: 20,
     padding: 20,
     marginBottom: 20,
-    shadowColor: '#6A00F5',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.5,
-    shadowRadius: 16,
-    elevation: 10,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
   },
   greeting: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.primaryText,
     marginBottom: 8,
     fontFamily: 'Poppins_700Bold',
   },
@@ -161,7 +152,7 @@ const styles = StyleSheet.create({
   },
   location: {
     fontSize: 14,
-    color: '#FFFFFF',
+    color: colors.secondaryText,
     fontWeight: '600',
     fontFamily: 'Poppins_600SemiBold',
   },
@@ -186,20 +177,19 @@ const styles = StyleSheet.create({
   temperature: {
     fontSize: 48,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.primaryText,
     fontFamily: 'Poppins_700Bold',
   },
   temperatureCelsius: {
     fontSize: 20,
     fontWeight: '400',
-    color: '#FFFFFF',
+    color: colors.secondaryText,
     marginLeft: 8,
-    opacity: 0.8,
     fontFamily: 'Poppins_400Regular',
   },
   condition: {
     fontSize: 16,
-    color: '#FFFFFF',
+    color: colors.primaryText,
     marginBottom: 8,
     fontFamily: 'Poppins_400Regular',
   },
@@ -208,8 +198,7 @@ const styles = StyleSheet.create({
   },
   detail: {
     fontSize: 13,
-    color: '#FFFFFF',
-    opacity: 0.8,
+    color: colors.secondaryText,
     fontFamily: 'Poppins_400Regular',
   },
   forecast: {
@@ -217,7 +206,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.2)',
+    borderTopColor: colors.border,
   },
   forecastItem: {
     alignItems: 'center',
@@ -225,14 +214,13 @@ const styles = StyleSheet.create({
   },
   forecastTime: {
     fontSize: 12,
-    color: '#FFFFFF',
-    opacity: 0.8,
+    color: colors.secondaryText,
     fontFamily: 'Poppins_400Regular',
   },
   forecastTemp: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.primaryText,
     fontFamily: 'Poppins_600SemiBold',
   },
 });

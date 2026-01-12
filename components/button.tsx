@@ -59,14 +59,18 @@ export const Button: React.FC<ButtonProps> = ({
       case "filled":
         return {
           ...baseStyle,
-          backgroundColor: isDark ? OrlGoColors.primary : OrlGoColors.primary,
+          backgroundColor: disabled 
+            ? OrlGoColors.sectionBackground 
+            : OrlGoColors.royalBlue,
         };
       case "outline":
         return {
           ...baseStyle,
-          backgroundColor: "transparent",
-          borderWidth: 1,
-          borderColor: isDark ? OrlGoColors.primaryLight : OrlGoColors.primary,
+          backgroundColor: OrlGoColors.white,
+          borderWidth: 2,
+          borderColor: disabled 
+            ? OrlGoColors.borderColor 
+            : OrlGoColors.royalBlue,
         };
       case "ghost":
         return {
@@ -78,29 +82,43 @@ export const Button: React.FC<ButtonProps> = ({
 
   const getTextColor = () => {
     if (disabled) {
-      return isDark ? OrlGoColors.textMuted : OrlGoColors.textSecondary;
+      return OrlGoColors.secondaryText;
     }
 
     switch (variant) {
       case "filled":
-        return OrlGoColors.textOnDark;
+        return OrlGoColors.white;
       case "outline":
       case "ghost":
-        return OrlGoColors.primary;
+        return OrlGoColors.royalBlue;
     }
+  };
+
+  const getPressedStyle = ({ pressed }: { pressed: boolean }) => {
+    if (pressed && !disabled && variant === "filled") {
+      return {
+        backgroundColor: OrlGoColors.royalBluePressed,
+      };
+    }
+    if (pressed && !disabled && variant === "ghost") {
+      return {
+        backgroundColor: OrlGoColors.royalBlueSoft,
+      };
+    }
+    return {};
   };
 
   return (
     <Pressable
       onPress={onPress}
       disabled={disabled || loading}
-      style={[
+      style={({ pressed }) => [
         getVariantStyle(),
         {
           height: sizeStyles[size].height,
           paddingHorizontal: sizeStyles[size].padding,
-          opacity: disabled ? 0.5 : 1,
         },
+        getPressedStyle({ pressed }),
         style,
       ]}
     >

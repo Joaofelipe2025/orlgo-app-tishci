@@ -3,7 +3,6 @@ import React from "react";
 import { ScrollView, StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { LinearGradient } from "expo-linear-gradient";
 import { getBrandById } from "@/data/parksData";
 import { colors } from "@/styles/commonStyles";
 import { IconSymbol } from "@/components/IconSymbol";
@@ -39,20 +38,15 @@ export default function BrandParksScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.dark ? '#F9FAFB' : '#FFFFFF' }]}>
-      {/* Compact Header with white text */}
-      <LinearGradient
-        colors={['#6A00F5', '#9A00FF']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.header}
-      >
+    <View style={[styles.container, { backgroundColor: colors.white }]}>
+      {/* Compact Header */}
+      <View style={styles.header}>
         <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
           <IconSymbol
             ios_icon_name="chevron.left"
             android_material_icon_name="arrow-back"
             size={24}
-            color="#FFFFFF"
+            color={colors.primary}
           />
         </TouchableOpacity>
         <View style={styles.headerContent}>
@@ -63,7 +57,7 @@ export default function BrandParksScreen() {
             Escolha seu parque
           </Text>
         </View>
-      </LinearGradient>
+      </View>
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -82,10 +76,7 @@ export default function BrandParksScreen() {
                   style={styles.parkImage}
                   resizeMode="cover"
                 />
-                <LinearGradient
-                  colors={['transparent', 'rgba(0, 0, 0, 0.8)']}
-                  style={styles.parkGradient}
-                >
+                <View style={styles.parkOverlay}>
                   <View style={styles.parkInfo}>
                     <Text style={[styles.parkName, { fontFamily: 'Poppins_700Bold' }]}>
                       {park.name}
@@ -101,11 +92,11 @@ export default function BrandParksScreen() {
                         ios_icon_name="chevron.right"
                         android_material_icon_name="chevron-right"
                         size={20}
-                        color="#FFFFFF"
+                        color={colors.white}
                       />
                     </View>
                   </View>
-                </LinearGradient>
+                </View>
               </View>
             </TouchableOpacity>
           </React.Fragment>
@@ -126,11 +117,9 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 16,
     paddingHorizontal: 16,
-    shadowColor: '#6A00F5',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
+    backgroundColor: colors.white,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
   },
   backButton: {
     width: 40,
@@ -144,13 +133,12 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.primaryText,
     marginBottom: 4,
   },
   headerSubtitle: {
     fontSize: 13,
-    color: '#FFFFFF',
-    opacity: 0.9,
+    color: colors.secondaryText,
   },
   scrollContent: {
     padding: 16,
@@ -160,20 +148,24 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginBottom: 20,
     height: 280,
-    shadowColor: '#6A00F5',
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.08,
     shadowRadius: 12,
-    elevation: 6,
+    elevation: 4,
   },
   parkImage: {
     width: '100%',
     height: '100%',
     position: 'absolute',
   },
-  parkGradient: {
+  parkOverlay: {
     flex: 1,
     justifyContent: 'flex-end',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
   },
   parkInfo: {
     padding: 20,
@@ -181,17 +173,17 @@ const styles = StyleSheet.create({
   parkName: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.primaryText,
     marginBottom: 8,
   },
   parkDescription: {
     fontSize: 14,
-    color: '#FFFFFF',
+    color: colors.secondaryText,
     marginBottom: 16,
     lineHeight: 20,
   },
   ctaButton: {
-    backgroundColor: '#6A00F5',
+    backgroundColor: colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 12,
@@ -199,16 +191,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'flex-start',
-    shadowColor: '#6A00F5',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 12,
-    elevation: 8,
   },
   ctaButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.white,
     marginRight: 8,
   },
 });

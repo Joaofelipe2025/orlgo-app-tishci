@@ -3,41 +3,25 @@ import { StyleSheet } from 'react-native';
 import { OrlGoColors } from '@/constants/Colors';
 
 export const colors = {
-  // Core Colors
-  primary: OrlGoColors.primary,
-  primaryDark: OrlGoColors.primaryDark,
-  primaryLight: OrlGoColors.primaryLight,
-  secondary: OrlGoColors.secondary,
-  secondaryLight: OrlGoColors.secondaryLight,
+  // Base Colors
+  white: OrlGoColors.white,
+  primaryText: OrlGoColors.primaryText,
   
-  // Accent
-  accent: OrlGoColors.accent,
-  accentDark: OrlGoColors.accentDark,
-  accentLight: OrlGoColors.accentLight,
+  // Royal Blue System
+  primary: OrlGoColors.royalBlue,
+  primaryPressed: OrlGoColors.royalBluePressed,
+  primarySoft: OrlGoColors.royalBlueSoft,
   
-  // Text Colors
-  text: OrlGoColors.textPrimary,
-  textSecondary: OrlGoColors.textSecondary,
-  textOnDark: OrlGoColors.textOnDark,
-  textMuted: OrlGoColors.textMuted,
-  
-  // Backgrounds
-  background: OrlGoColors.backgroundPrimary,
-  backgroundSecondary: OrlGoColors.backgroundSecondary,
-  
-  // Card & Surface
-  card: OrlGoColors.cardLight,
-  cardDark: OrlGoColors.cardDark,
-  
-  // Borders & Dividers
+  // Neutral Greys
+  lightBackground: OrlGoColors.lightBackground,
+  sectionBackground: OrlGoColors.sectionBackground,
   border: OrlGoColors.borderColor,
-  divider: OrlGoColors.dividerColor,
+  secondaryText: OrlGoColors.secondaryText,
   
   // Semantic Colors
   success: OrlGoColors.success,
   warning: OrlGoColors.warning,
   error: OrlGoColors.error,
-  info: OrlGoColors.info,
   
   // Queue Colors
   queueGreen: OrlGoColors.queueGreen,
@@ -45,17 +29,14 @@ export const colors = {
   queueRed: OrlGoColors.queueRed,
   queueGray: OrlGoColors.queueGray,
   
-  // Shadow
-  shadow: OrlGoColors.shadow,
-  shadowDark: OrlGoColors.shadowDark,
-  
   // Legacy aliases (for backwards compatibility)
-  neonGreen: OrlGoColors.accent,
-  neonGreenDark: OrlGoColors.accentDark,
-  textLight: OrlGoColors.textOnDark,
-  textGray: OrlGoColors.textSecondary,
-  backgroundGray: '#F9FAFB',
-  backgroundDark: OrlGoColors.backgroundSecondary,
+  text: OrlGoColors.primaryText,
+  textSecondary: OrlGoColors.secondaryText,
+  textOnDark: OrlGoColors.white,
+  background: OrlGoColors.white,
+  backgroundSecondary: OrlGoColors.lightBackground,
+  card: OrlGoColors.white,
+  shadow: 'rgba(0, 0, 0, 0.08)',
 };
 
 export const typography = {
@@ -130,44 +111,22 @@ export const shadows = {
   sm: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.06,
     shadowRadius: 4,
     elevation: 2,
   },
   md: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 4,
   },
   lg: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.1,
     shadowRadius: 16,
-    elevation: 8,
-  },
-  glow: {
-    shadowColor: OrlGoColors.accent,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  glowPrimary: {
-    shadowColor: OrlGoColors.primary,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  // Legacy alias
-  glowPurple: {
-    shadowColor: OrlGoColors.primary,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
     elevation: 8,
   },
 };
@@ -175,11 +134,11 @@ export const shadows = {
 export const commonStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
   },
   safeArea: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
   },
   scrollView: {
     flex: 1,
@@ -188,16 +147,19 @@ export const commonStyles = StyleSheet.create({
     padding: spacing.md,
   },
   card: {
-    backgroundColor: colors.card,
+    backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
     padding: spacing.md,
-    ...shadows.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...shadows.sm,
   },
   cardCompact: {
-    backgroundColor: colors.card,
+    backgroundColor: colors.white,
     borderRadius: borderRadius.md,
     padding: spacing.sm,
-    ...shadows.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   row: {
     flexDirection: 'row',
@@ -228,20 +190,19 @@ export const commonStyles = StyleSheet.create({
     fontWeight: '400',
   },
   primaryButton: {
-    backgroundColor: colors.accent,
+    backgroundColor: colors.primary,
     borderRadius: borderRadius.md,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.glow,
   },
   primaryButtonText: {
     ...typography.button,
-    color: colors.textOnDark,
+    color: colors.white,
   },
   secondaryButton: {
-    backgroundColor: 'transparent',
+    backgroundColor: colors.white,
     borderWidth: 2,
     borderColor: colors.primary,
     borderRadius: borderRadius.md,
@@ -255,7 +216,7 @@ export const commonStyles = StyleSheet.create({
     color: colors.primary,
   },
   input: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     borderRadius: borderRadius.md,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.md,
@@ -279,13 +240,13 @@ export const commonStyles = StyleSheet.create({
   },
   label: {
     ...typography.bodySmall,
-    color: colors.textSecondary,
+    color: colors.secondaryText,
     marginBottom: spacing.xs,
     fontWeight: '600',
   },
   divider: {
     height: 1,
-    backgroundColor: colors.divider,
+    backgroundColor: colors.border,
     marginVertical: spacing.md,
   },
   badge: {

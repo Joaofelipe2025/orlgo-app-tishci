@@ -2,7 +2,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from './IconSymbol';
 import { colors } from '@/styles/commonStyles';
 
@@ -12,51 +11,39 @@ export function NavigationMenu() {
   const menuItems = [
     {
       id: 'parks',
-      icon: 'rollercoaster',
-      androidIcon: 'attractions',
+      icon: 'attractions',
       label: 'Parques',
       route: '/(tabs)/brands',
-      gradient: ['#6A00F5', '#9A00FF'],
     },
     {
       id: 'marketplace',
-      icon: 'bag.fill',
-      androidIcon: 'shopping-bag',
+      icon: 'shopping-bag',
       label: 'Marketplace',
       route: '/(tabs)/marketplace',
-      gradient: ['#9A00FF', '#C026D3'],
     },
     {
       id: 'food',
-      icon: 'fork.knife',
-      androidIcon: 'restaurant',
+      icon: 'restaurant',
       label: 'Alimentação',
       route: '/(tabs)/marketplace',
-      gradient: ['#C026D3', '#D946EF'],
     },
     {
       id: 'shows',
-      icon: 'theatermasks.fill',
-      androidIcon: 'theater-comedy',
+      icon: 'theater-comedy',
       label: 'Shows',
       route: '/(tabs)/parks',
-      gradient: ['#D946EF', '#E879F9'],
     },
     {
       id: 'parking',
-      icon: 'car.fill',
-      androidIcon: 'local-parking',
+      icon: 'local-parking',
       label: 'Estacionamento',
       route: '/(tabs)/map',
-      gradient: ['#E879F9', '#F0ABFC'],
     },
     {
       id: 'favorites',
-      icon: 'heart.fill',
-      androidIcon: 'favorite',
+      icon: 'favorite',
       label: 'Favoritos',
       route: '/(tabs)/itinerary',
-      gradient: ['#F0ABFC', '#FCA5A5'],
     },
   ];
 
@@ -77,21 +64,16 @@ export function NavigationMenu() {
               onPress={() => handlePress(item.route)}
               style={styles.itemWrapper}
             >
-              <LinearGradient
-                colors={item.gradient}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.item}
-              >
+              <View style={styles.item}>
                 <View style={styles.iconContainer}>
                   <IconSymbol
                     ios_icon_name={item.icon}
-                    android_material_icon_name={item.androidIcon}
+                    android_material_icon_name={item.icon}
                     size={32}
-                    color="#FFFFFF"
+                    color={colors.primary}
                   />
                 </View>
-              </LinearGradient>
+              </View>
               <Text style={styles.label}>{item.label}</Text>
             </TouchableOpacity>
           </React.Fragment>
@@ -108,7 +90,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '700',
-    color: colors.text,
+    color: colors.primaryText,
     marginBottom: 16,
     fontFamily: 'Poppins_700Bold',
   },
@@ -124,27 +106,30 @@ const styles = StyleSheet.create({
   item: {
     width: '100%',
     aspectRatio: 1,
+    backgroundColor: colors.white,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#6A00F5',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 6,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
   },
   iconContainer: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: colors.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
   },
   label: {
     fontSize: 12,
     fontWeight: '600',
-    color: colors.text,
+    color: colors.primaryText,
     marginTop: 8,
     textAlign: 'center',
     fontFamily: 'Poppins_600SemiBold',

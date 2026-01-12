@@ -2,7 +2,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from './IconSymbol';
 import { colors } from '@/styles/commonStyles';
 
@@ -56,21 +55,15 @@ export function DailyAgenda({ nextAttraction }: DailyAgendaProps) {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={handleAddAttractions}
+          style={styles.addButton}
         >
-          <LinearGradient
-            colors={['#6A00F5', '#9A00FF']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.addButton}
-          >
-            <IconSymbol
-              ios_icon_name="plus"
-              android_material_icon_name="add"
-              size={20}
-              color="#FFFFFF"
-            />
-            <Text style={styles.addButtonText}>Adicionar Atrações</Text>
-          </LinearGradient>
+          <IconSymbol
+            ios_icon_name="plus"
+            android_material_icon_name="add"
+            size={20}
+            color={colors.white}
+          />
+          <Text style={styles.addButtonText}>Adicionar Atrações</Text>
         </TouchableOpacity>
       </View>
     );
@@ -97,7 +90,7 @@ export function DailyAgenda({ nextAttraction }: DailyAgendaProps) {
               ios_icon_name="clock.fill"
               android_material_icon_name="schedule"
               size={16}
-              color={colors.textDark}
+              color={colors.white}
             />
             <Text style={styles.waitTimeText}>{nextAttraction.waitTime} min</Text>
           </View>
@@ -116,21 +109,15 @@ export function DailyAgenda({ nextAttraction }: DailyAgendaProps) {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={handleViewItinerary}
+          style={styles.ctaButton}
         >
-          <LinearGradient
-            colors={['#6A00F5', '#9A00FF']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.ctaButton}
-          >
-            <Text style={styles.ctaButtonText}>Ver Roteiro Completo</Text>
-            <IconSymbol
-              ios_icon_name="chevron.right"
-              android_material_icon_name="chevron-right"
-              size={20}
-              color="#FFFFFF"
-            />
-          </LinearGradient>
+          <Text style={styles.ctaButtonText}>Ver Roteiro Completo</Text>
+          <IconSymbol
+            ios_icon_name="chevron.right"
+            android_material_icon_name="chevron-right"
+            size={20}
+            color={colors.white}
+          />
         </TouchableOpacity>
       </View>
     </View>
@@ -139,15 +126,17 @@ export function DailyAgenda({ nextAttraction }: DailyAgendaProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.card,
+    backgroundColor: colors.white,
     borderRadius: 20,
     padding: 20,
     marginBottom: 20,
+    borderWidth: 1,
+    borderColor: colors.border,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.08,
     shadowRadius: 12,
-    elevation: 6,
+    elevation: 4,
   },
   emptyContainer: {
     alignItems: 'center',
@@ -157,7 +146,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: 'rgba(106, 0, 245, 0.1)',
+    backgroundColor: colors.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
@@ -165,14 +154,14 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: colors.text,
+    color: colors.primaryText,
     textAlign: 'center',
     marginBottom: 8,
     fontFamily: 'Poppins_700Bold',
   },
   emptySubtitle: {
     fontSize: 14,
-    color: '#999',
+    color: colors.secondaryText,
     textAlign: 'center',
     marginBottom: 20,
     lineHeight: 20,
@@ -181,20 +170,16 @@ const styles = StyleSheet.create({
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 12,
     gap: 8,
-    shadowColor: '#6A00F5',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 6,
   },
   addButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.white,
     fontFamily: 'Poppins_600SemiBold',
   },
   header: {
@@ -206,7 +191,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.text,
+    color: colors.primaryText,
     fontFamily: 'Poppins_700Bold',
   },
   viewAllText: {
@@ -216,7 +201,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_600SemiBold',
   },
   attractionCard: {
-    backgroundColor: 'rgba(106, 0, 245, 0.05)',
+    backgroundColor: colors.primarySoft,
     borderRadius: 16,
     padding: 16,
   },
@@ -233,13 +218,13 @@ const styles = StyleSheet.create({
   attractionName: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.text,
+    color: colors.primaryText,
     marginBottom: 4,
     fontFamily: 'Poppins_700Bold',
   },
   parkName: {
     fontSize: 14,
-    color: '#999',
+    color: colors.secondaryText,
     fontFamily: 'Poppins_400Regular',
   },
   waitTimeBadge: {
@@ -253,7 +238,7 @@ const styles = StyleSheet.create({
   waitTimeText: {
     fontSize: 14,
     fontWeight: '700',
-    color: colors.textDark,
+    color: colors.white,
     fontFamily: 'Poppins_700Bold',
   },
   timeRow: {
@@ -264,27 +249,23 @@ const styles = StyleSheet.create({
   },
   estimatedTime: {
     fontSize: 14,
-    color: '#999',
+    color: colors.secondaryText,
     fontFamily: 'Poppins_400Regular',
   },
   ctaButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 12,
     gap: 8,
-    shadowColor: '#6A00F5',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
   },
   ctaButtonText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.white,
     fontFamily: 'Poppins_600SemiBold',
   },
 });

@@ -10,7 +10,6 @@ import {
   Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import { brandsData } from '@/data/parksData';
 import { colors } from '@/styles/commonStyles';
 import { IconSymbol } from '@/components/IconSymbol';
@@ -28,16 +27,11 @@ export default function BrandsScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Compact Header with white text */}
-      <LinearGradient
-        colors={[colors.secondary, colors.primary]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.header}
-      >
+      {/* Compact Header */}
+      <View style={styles.header}>
         <Text style={styles.headerTitle}>Parques</Text>
         <Text style={styles.headerSubtitle}>Escolha sua marca favorita</Text>
-      </LinearGradient>
+      </View>
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -58,10 +52,7 @@ export default function BrandsScreen() {
                     style={styles.brandImage}
                     resizeMode="cover"
                   />
-                  <LinearGradient
-                    colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
-                    style={styles.brandGradient}
-                  >
+                  <View style={styles.brandOverlay}>
                     <View style={styles.brandInfo}>
                       <Text style={styles.brandName}>{brand.name}</Text>
                       <View style={styles.parksCount}>
@@ -69,14 +60,14 @@ export default function BrandsScreen() {
                           ios_icon_name="building.2.fill"
                           android_material_icon_name="domain"
                           size={16}
-                          color="#FFFFFF"
+                          color={colors.primary}
                         />
                         <Text style={styles.parksCountText}>
                           {brand.parks.length} {brand.parks.length === 1 ? 'parque' : 'parques'}
                         </Text>
                       </View>
                     </View>
-                  </LinearGradient>
+                  </View>
                 </View>
               </TouchableOpacity>
             </React.Fragment>
@@ -93,25 +84,27 @@ export default function BrandsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
   },
   header: {
     paddingTop: Platform.OS === 'android' ? 48 : 60,
     paddingBottom: 16,
     paddingHorizontal: 20,
     alignItems: 'center',
+    backgroundColor: colors.white,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: '700',
-    color: colors.textOnDark,
+    color: colors.primaryText,
     marginBottom: 4,
     fontFamily: 'Poppins_700Bold',
   },
   headerSubtitle: {
     fontSize: 13,
-    color: colors.textOnDark,
-    opacity: 0.9,
+    color: colors.secondaryText,
     fontFamily: 'Poppins_400Regular',
   },
   scrollContent: {
@@ -127,20 +120,24 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 20,
     overflow: 'hidden',
-    shadowColor: colors.primary,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.08,
     shadowRadius: 12,
-    elevation: 6,
+    elevation: 4,
   },
   brandImage: {
     width: '100%',
     height: '100%',
     position: 'absolute',
   },
-  brandGradient: {
+  brandOverlay: {
     flex: 1,
     justifyContent: 'flex-end',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
   },
   brandInfo: {
     padding: 20,
@@ -148,7 +145,7 @@ const styles = StyleSheet.create({
   brandName: {
     fontSize: 32,
     fontWeight: '700',
-    color: colors.textOnDark,
+    color: colors.primaryText,
     marginBottom: 8,
     fontFamily: 'Poppins_700Bold',
   },
@@ -159,7 +156,7 @@ const styles = StyleSheet.create({
   },
   parksCountText: {
     fontSize: 14,
-    color: colors.textOnDark,
+    color: colors.primaryText,
     fontFamily: 'Poppins_600SemiBold',
   },
 });
